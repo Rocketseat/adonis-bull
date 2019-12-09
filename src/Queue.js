@@ -16,7 +16,6 @@ class Queue {
     this.app = app
     this.resolver = resolver
 
-    this._instance = null
     this._queues = null
 
     const redis = Config.get('redis')
@@ -101,8 +100,8 @@ class Queue {
 
     const { UI } = BullBoard
 
-    const server = UI.listen(9999, function () {
-      this.Logger.info('Starting bull board server')
+    const server = UI.listen(9999, () => {
+      this.Logger.info('bull board on http://localhost:9999')
     })
 
     const shutdown = () => {
@@ -111,6 +110,12 @@ class Queue {
 
     process.on('SIGTERM', shutdown)
     process.on('SIGINT', shutdown)
+  }
+
+  async remove (name, jobId) {
+    const job = await this.queues[name].bull.getJob(jobId)
+
+    job.remove()
   }
 
   /* eslint handle-callback-err: "error" */
