@@ -11,13 +11,16 @@ This library provides an easy way to start using an asynchronous job queue with 
 Register the Bull provider at `start/app.js`
 
 ```js
-const providers = [..."@rocketseat/adonis-bull/providers/Bull"];
+const providers = [
+  //...
+  "@rocketseat/adonis-bull/providers/Bull"
+];
 ```
 
-Create a file with the `jobs` that will be processed:
+Create a file with the `jobs` that will be processed at `start/jobs.js`:
 
 ```js
-const jobs = ["App/Jobs/UserRegisterEmail"];
+module.exports = ["App/Jobs/UserRegisterEmail"];
 ```
 
 Add the config file at `config/bull.js`:
@@ -38,9 +41,9 @@ Create a file to initiate `Bull` at `preloads/bull.js`:
 ```js
 const Bull = use("Rocketseat/Bull");
 
-Bull.listen();
-// Optionally you can start BullBoard:
+Bull.process();
 
+// Optionally you can start BullBoard:
 Bull.ui();
 // http://localhost:9999
 ```

@@ -1,5 +1,4 @@
 const { ServiceProvider, resolver } = require('@adonisjs/fold')
-
 const path = require('path')
 
 class BullProvider extends ServiceProvider {
