@@ -1,6 +1,6 @@
 {
   "name": "@rocketseat/adonis-bull",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "src/Queue.js",
   "license": "MIT",
   "scripts": {
@@ -43,7 +43,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Rocketseat/adonis-agenda.git"
+    "url": "git+https://github.com/rocketseat/adonis-bull.git"
   },
   "dependencies": {
     "bull": "^3.12.0",
