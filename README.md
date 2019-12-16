@@ -101,6 +101,8 @@ class UserRegisterEmail {
       .broadcast('new:user', result)
   }
 }
+
+module.exports = UserRegisterEmail;
 ```
 
 ## Processing the jobs
