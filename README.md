@@ -78,6 +78,8 @@ class UserRegisterEmail {
     return data;
   }
 }
+
+module.exports = UserRegisterEmail;
 ```
 
 ### Events
