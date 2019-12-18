@@ -48,6 +48,17 @@ Bull.ui();
 // http://localhost:9999
 ```
 
+Add .preLoad in server.js to initialize the bull preload
+
+```
+new Ignitor(require('@adonisjs/fold'))
+  .appRoot(__dirname)
+  .preLoad('preloads/bull') // Add This Line
+  .fireHttpServer()
+  .catch(console.error)
+
+```
+
 ## Creating your job
 
 Create a class that mandatorily has the methods `key` and `handle`.
