@@ -1,6 +1,11 @@
-# Adonis Bull Provider
+<h1 align="center">
+  <img alt="Adonis Bull" src="https://user-images.githubusercontent.com/16545335/71328407-ab6f3180-24f5-11ea-8483-dcd7f25550bd.png" />
+</h1>
 
-This library provides an easy way to start using an asynchronous job queue with AdonisJS.
+<p align="center">
+  A <a href="https://github.com/OptimalBits/bull/">Bull</a> provider for the Adonis framework. </br>
+  Adonis Bull provides an easy way to start using Bull. The fastest, most reliable, Redis-based queue for Node.
+</p>
 
 ## Install
 
