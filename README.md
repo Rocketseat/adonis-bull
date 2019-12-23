@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img alt="Adonis Bull" src="https://user-images.githubusercontent.com/16545335/71328407-ab6f3180-24f5-11ea-8483-dcd7f25550bd.png" />
+  <img width="275" alt="Adonis Bull" src="https://user-images.githubusercontent.com/16545335/71373449-f2146880-2595-11ea-8a8c-9f51384a3f22.png">
 </h1>
 
 <p align="center">
