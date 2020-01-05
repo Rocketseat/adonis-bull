@@ -68,7 +68,6 @@ new Ignitor(require('@adonisjs/fold'))
 
 Create a class that mandatorily has the methods `key` and `handle`.
 
-O método `key` é a identificação única de cada `job`. Ele deve ser um método `static get`.
 The `key` method is the unique identification of each job. It has to be a `static get` method.
 
 The `handle` is the method that contains the functionality of your `job`.
@@ -99,8 +98,6 @@ module.exports = UserRegisterEmail;
 ```
 
 ### Events
-
-Você pode configurar os eventos relacionados ao `job` para ter mais controle sobre o mesmo:
 
 You can config the events related to the `job` to have more control over it
 
@@ -173,7 +170,6 @@ This `job` will be sent only on the specific date, wich for example here is on N
 
 When finishing a date, never use past dates because it will cause an error.
 
-Outras maneiras de utilizar o `schedule`:
 other ways of using `schedule`:
 
 ```js
@@ -197,8 +193,6 @@ Bull.add(key, data, {
 This `job` will be run at 12:30 PM, only on wednesdays and fridays.
 
 ### Exceptions
-
-Para ter um controle maior sobre os erros que ocorrem na sua fila, os eventos que falharem podem ser manipulados no arquivo `App/Exceptions/QueueHandler.js`:
 
 To have a bigger control over errors that might occur on the line, the events that fail can be manipulated at the file `App/Exceptions/QueueHandler.js`:
 
