@@ -4,7 +4,6 @@
   "main": "src/Queue.js",
   "license": "MIT",
   "scripts": {
-    "posttest": "npm run coverage",
     "test:local": "node japaFile.js",
     "test": "nyc npm run test:local",
     "coverage": "nyc report --reporter=text-lcov | coveralls"

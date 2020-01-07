@@ -60,12 +60,6 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# Yarn lock file
-yarn.lock
-
-# Package lock file
-package-lock.json
-
 # dotenv environment variables file
 .env
 

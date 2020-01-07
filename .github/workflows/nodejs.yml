@@ -1,0 +1,37 @@
+name: Node.js 
+
+on: [push, pull_request]
+env:
+  CI: true
+  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+
+jobs:
+  run:
+    name: Node.js ${{ matrix.node-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [8.x, 10.x, 12.x]
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v1
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+            
+      - name: Setup Redis
+        uses: zhulik/redis-action@1.1.0
+        with:
+          redis version: '5'
+          number of databases: 1
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Run tests
+        run: yarn test
