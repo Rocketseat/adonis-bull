@@ -21,7 +21,7 @@ class Queue {
     const redis = Config.get('redis')
     const { connection } = Config.get('bull')
 
-    this.config = redis[connection]
+    this.config =  { redis: redis[connection] }
   }
 
   _getJobListeners (Job) {
