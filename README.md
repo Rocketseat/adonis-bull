@@ -114,7 +114,7 @@ You can use the `connection` static get method to specify which connection your 
 class UserRegisterEmail {
   // ...
   static get connection() {
-    return "other";
+    return "remote";
   }
 }
 ```
