@@ -47,7 +47,7 @@ module.exports = {
       keyPrefix: ""
     }
   },
-  other: "redis://redis.example.com?password=correcthorsebatterystaple"
+  remote: "redis://redis.example.com?password=correcthorsebatterystaple"
 };
 ```
 
