@@ -37,20 +37,31 @@ const Env = use("Env");
 
 module.exports = {
   // redis connection
-  connection: Env.get("BULL_CONNECTION", "BULL")
+  connection: Env.get("BULL_CONNECTION", "bull"),
+  bull: {
+    redis: {
+      host: "127.0.0.1",
+      port: 6379,
+      password: null,
+      db: 0,
+      keyPrefix: ""
+    }
+  },
+  other: "redis://redis.example.com?password=correcthorsebatterystaple"
 };
 ```
+
+In the above file you can define redis connections, there you can pass all `Bull` queue configurations described [here](https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queue).
 
 Create a file to initiate `Bull` at `preloads/bull.js`:
 
 ```js
 const Bull = use("Rocketseat/Bull");
 
-Bull.process();
-
-// Optionally you can start BullBoard:
-Bull.ui();
-// http://localhost:9999
+Bull.process()
+  // Optionally you can start BullBoard:
+  .ui(9999); // http://localhost:9999
+// You don't need to specify the port, the default number is 9999
 ```
 
 Add .preLoad in server.js to initialize the bull preload
@@ -95,6 +106,17 @@ class UserRegisterEmail {
 }
 
 module.exports = UserRegisterEmail;
+```
+
+You can use the `connection` static get method to specify which connection your `job` will work.
+
+```js
+class UserRegisterEmail {
+  // ...
+  static get connection() {
+    return "other";
+  }
+}
 ```
 
 ### Events
