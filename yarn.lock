@@ -394,10 +394,10 @@ braces@^3.0.1:
   dependencies:
     fill-range "^7.0.1"
 
-bull-board@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/bull-board/-/bull-board-0.5.0.tgz#54d1ac05b7d21e0023f82a8cd53f86f042232dc7"
-  integrity sha512-GePnFFGvQzidKj+tDtF2cfqoMuomnwysRxtgRc48nFuuRvQ562K4Pdlf89hZObnYqk1JWzjZslBzmI+KfnO+Gw==
+bull-board@0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/bull-board/-/bull-board-0.6.0.tgz#eb2cdb06c3058a581c6047beb2bb7554362842b7"
+  integrity sha512-Rx4FoVo5PUC8kuXpsRY/ewj2q/uTk/TwaA2mrd6Ijh60NCGBRDcIJN+Hk/dZoHXJWDwJBrcTp3Q42cekxbyv7Q==
   dependencies:
     body-parser "^1.17.2"
     bull "3.11.0"

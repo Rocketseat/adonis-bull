@@ -18,10 +18,10 @@ class Queue {
 
     this._queues = null
 
-    const redis = Config.get('redis')
-    const { connection } = Config.get('bull')
+    const { connection, ...connections } = Config.get('bull')
 
-    this.config = { redis: redis[connection] }
+    this.config = connections[connection]
+    this.connections = connections
   }
 
   _getJobListeners (Job) {
@@ -42,8 +42,13 @@ class Queue {
       this._queues = this.jobs.reduce((queues, path) => {
         const Job = this.app.use(path)
 
+        const config = this.config
+        if (Job.connection) {
+          config.redis = this.connections[Job.connection]
+        }
+
         queues[Job.key] = {
-          bull: new Bull(Job.key, this.config),
+          bull: new Bull(Job.key, config),
           Job,
           name: Job.key,
           handle: Job.handle,
@@ -95,13 +100,13 @@ class Queue {
     }
   }
 
-  ui () {
+  ui (port = 9999) {
     BullBoard.setQueues(Object.values(this.queues).map(queue => queue.bull))
 
     const { UI } = BullBoard
 
-    const server = UI.listen(9999, () => {
-      this.Logger.info('bull board on http://localhost:9999')
+    const server = UI.listen(port, () => {
+      this.Logger.info(`bull board on http://localhost:${port}`)
     })
 
     const shutdown = () => {
@@ -161,6 +166,8 @@ class Queue {
 
     process.on('SIGTERM', shutdown)
     process.on('SIGINT', shutdown)
+
+    return this
   }
 }
 
