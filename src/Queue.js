@@ -42,9 +42,9 @@ class Queue {
       this._queues = this.jobs.reduce((queues, path) => {
         const Job = this.app.use(path)
 
-        const config = this.config
+        let config = this.config
         if (Job.connection) {
-          config.redis = this.connections[Job.connection]
+          config = this.connections[Job.connection]
         }
 
         queues[Job.key] = {
