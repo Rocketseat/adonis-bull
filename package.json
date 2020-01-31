@@ -1,6 +1,6 @@
 {
   "name": "@rocketseat/adonis-bull",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "main": "src/Queue.js",
   "license": "MIT",
   "scripts": {
@@ -27,6 +27,7 @@
     "adonis-queue"
   ],
   "devDependencies": {
+    "@adonisjs/ace": "^5.0.8",
     "@adonisjs/fold": "^4.0.9",
     "@adonisjs/sink": "^1.0.17",
     "coveralls": "^3.0.7",
