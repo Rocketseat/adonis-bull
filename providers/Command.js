@@ -9,7 +9,6 @@ class MigrationsProvider extends ServiceProvider {
 
   boot () {
     const ace = require('@adonisjs/ace')
-    console.log('COmando')
     ace.addCommand('Rocketseat/Commands/Bull:Listen')
   }
 }
