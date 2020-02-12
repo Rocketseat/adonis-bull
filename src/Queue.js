@@ -110,7 +110,10 @@ class Queue {
     })
 
     const shutdown = () => {
-      server.close(() => this.Logger.info('Stopping bull board server'))
+      server.close(() => {
+        this.Logger.info('Stopping bull board server')
+        process.exit(0)
+      })
     }
 
     process.on('SIGTERM', shutdown)
@@ -162,6 +165,8 @@ class Queue {
       Object.values(this.queues).map(queue => {
         queue.bull.close()
       })
+
+      process.exit(0)
     }
 
     process.on('SIGTERM', shutdown)
