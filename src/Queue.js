@@ -162,11 +162,11 @@ class Queue {
     })
 
     const shutdown = () => {
-      Object.values(this.queues).map(queue => {
-        queue.bull.close()
+      const promises = Object.values(this.queues).map(queue => {
+        return queue.bull.close()
       })
 
-      process.exit(0)
+      return Promise.all(promises).then(process.exit(0))
     }
 
     process.on('SIGTERM', shutdown)
