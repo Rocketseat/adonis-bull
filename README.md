@@ -12,6 +12,12 @@
 `adonis install @rocketseat/adonis-bull`
 
 ## Use
+Register the Bull commands at `start/app.js`
+```js
+const aceProviders = [
+  '@rocketseat/adonis-bull/providers/Command',
+];
+```
 
 Register the Bull provider at `start/app.js`
 
