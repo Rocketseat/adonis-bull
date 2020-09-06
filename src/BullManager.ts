@@ -37,6 +37,7 @@ export class BullManager implements BullManagerContract {
 				}),
 				name: queueName,
 				handle: job.handle,
+				boot: job.boot,
 				concurrency: job.concurrency || 1,
 				options: job.options,
 				queueOptions: job.queueOptions,

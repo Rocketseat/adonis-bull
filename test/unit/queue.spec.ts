@@ -9,10 +9,6 @@ import { Emitter } from '@adonisjs/events/build/standalone'
 import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 
-// const delay = require('delay')
-// const { ioc, registrar, resolver } = require('@adonisjs/fold')
-// const path = require('path')
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 test.group('Bull', () => {
 	test('should add a new job', async (assert) => {
 		const ioc = new Ioc()
@@ -56,37 +52,41 @@ test.group('Bull', () => {
 	})
 
 	test('should add a new job with events inside Job class', async (assert) => {
-		assert.plan(1)
 		const ioc = new Ioc()
+		assert.plan(1)
 
-		ioc.bind('App/Jobs/TestBull', () => {
-			return class {
-				public queueName = 'TestBull-name'
+		ioc.bind('App/Jobs/TestBull', () => ({
+			queueName: 'TestBull-name',
+			concurrency: 2,
+			async handle() {},
+			boot(queue) {
+				assert.isOk(queue)
+			},
+		}))
 
-				public concurrency = 2
+		const redis = (new RedisManager(
+			ioc,
+			{
+				connection: 'primary',
+				connections: {
+					primary: {
+						host: process.env.REDIS_HOST,
+						port: Number(process.env.REDIS_PORT),
+						healthCheck: true,
+					},
+				},
+			} as any,
+			new Emitter(ioc)
+		) as unknown) as RedisManagerContract
 
-				public async handle() {}
+		const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-				public async boot(queue) {
-					assert.ok(queue)
-				}
-			}
-		})
-
-		ioc.bind('Adonis/Core/Logger', () => new FakeLogger({} as any))
-		ioc.bind('Adonis/Addons/Redis', () => new RedisManager(ioc, {} as any, {} as any))
-
-		const loggerInstance = ioc.use('Adonis/Core/Logger')
-		const Redis = ioc.use('Adonis/Addons/Redis')
-
-		const bull = new BullManager(ioc, loggerInstance, Redis, ['App/Jobs/TestBull'])
-		const Job = ioc.use('App/Jobs/TestBull')
+		const bull = new BullManager(ioc, logger, redis, ['App/Jobs/TestBull'])
+		const jobDefinition = ioc.use('App/Jobs/TestBull')
 		const data = { test: 'data' }
 
-		bull.add(Job.key, data)
+		bull.add(jobDefinition.queueName, data)
 		bull.process()
-
-		await delay(1050)
 	})
 
 	test('should schedule a new job', async (assert) => {
