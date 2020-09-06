@@ -1,58 +1,133 @@
 {
-  "name": "@rocketseat/adonis-bull",
-  "version": "0.2.2",
-  "main": "src/Queue.js",
-  "license": "MIT",
-  "scripts": {
-    "test:local": "node japaFile.js",
-    "test": "nyc npm run test:local",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
-  },
-  "nyc": {
-    "exclude": [
-      "**/*.spec.js",
-      "bin"
-    ]
-  },
-  "directories": {
-    "test": "test"
-  },
-  "keywords": [
-    "bull",
-    "queue",
-    "adonis",
-    "adonisjs",
-    "adonis-js",
-    "adonis-bull",
-    "adonis-queue"
-  ],
-  "devDependencies": {
-    "@adonisjs/ace": "^5.0.8",
-    "@adonisjs/fold": "^4.0.9",
-    "@adonisjs/sink": "^1.0.17",
-    "coveralls": "^3.0.7",
-    "delay": "^4.3.0",
-    "eslint": "^6.6.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-node": "^10.0.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "japa": "^3.0.1",
-    "nyc": "^14.1.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rocketseat/adonis-bull.git"
-  },
-  "dependencies": {
-    "bull": "^3.12.0",
-    "bull-board": "0.7.0",
-    "date-fns": "^2.7.0",
-    "human-interval": "^0.1.6"
-  },
-  "resolutions": {
-    "**/**/minimist": "^1.2.3",
-    "**/**/set-value": "^3.0.1"
-  }
+	"name": "@rocketseat/adonis-bull",
+	"version": "0.2.2",
+	"license": "MIT",
+	"description": "AdonisJS addon for Bull",
+	"main": "build/providers/Bull.js",
+	"files": [
+		"build/adonis-typings",
+		"build/providers",
+		"build/src",
+		"build/templates"
+	],
+	"types": "build/adonis-typings/index.d.ts",
+	"scripts": {
+		"mrm": "mrm --preset=@adonisjs/mrm-preset",
+		"pretest": "npm run lint",
+		"test": "docker-compose build && docker-compose run --rm tests",
+		"clean": "del build",
+		"copyfiles": "copyfiles \"templates/**/*.txt\" build",
+		"compile": "npm run lint && npm run clean && tsc",
+		"build": "npm run compile && npm run copyfiles",
+		"commit": "git-cz",
+		"release": "np",
+		"version": "npm run build",
+		"prepublishOnly": "npm run build",
+		"lint": "eslint . --ext=.ts",
+		"format": "prettier --write .",
+		"sync-labels": "github-label-sync --labels ./node_modules/@adonisjs/mrm-preset/gh-labels.json adonisjs/redis"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/rocketseat/adonis-bull.git"
+	},
+	"keywords": [
+		"bull",
+		"queue",
+		"adonis",
+		"adonisjs",
+		"adonis-js",
+		"adonis-bull",
+		"adonis-queue"
+	],
+	"bugs": {
+		"url": "https://github.com/rocketseat/adonis-bull/issues"
+	},
+	"homepage": "https://github.com/rocketseat/adonis-bull#readme",
+	"publishConfig": {
+		"access": "public",
+		"tag": "alpha"
+	},
+	"devDependencies": {
+		"@adonisjs/application": "^2.0.0",
+		"@adonisjs/core": "^5.0.0-preview-rc-1.11",
+		"@adonisjs/fold": "^6.4.0",
+		"@adonisjs/mrm-preset": "^2.4.0",
+		"@types/node": "^14.0.27",
+		"commitizen": "^4.1.2",
+		"copyfiles": "^2.3.0",
+		"cz-conventional-changelog": "^3.2.0",
+		"del-cli": "^3.0.1",
+		"eslint": "^7.6.0",
+		"eslint-config-prettier": "^6.11.0",
+		"eslint-plugin-adonis": "^1.0.14",
+		"eslint-plugin-prettier": "^3.1.4",
+		"github-label-sync": "^2.0.0",
+		"husky": "^4.2.5",
+		"japa": "^3.1.1",
+		"mrm": "^2.3.3",
+		"np": "^6.3.2",
+		"npm-audit-html": "^1.4.3",
+		"prettier": "^2.0.5",
+		"ts-node": "^8.10.2",
+		"typescript": "^3.9.7"
+	},
+	"peerDependencies": {
+		"@adonisjs/core": "^5.0.0-preview-rc",
+		"@adonisjs/redis": "^4.1.2"
+	},
+	"dependencies": {
+		"@poppinss/utils": "^2.5.2",
+		"bull-board": "^1.0.0-alpha.10",
+		"bullmq": "^1.9.0"
+	},
+	"nyc": {
+		"exclude": [
+			"test"
+		],
+		"extension": [
+			".ts"
+		]
+	},
+	"husky": {
+		"hooks": {
+			"commit-msg": "node ./node_modules/@adonisjs/mrm-preset/validateCommit/conventional/validate.js",
+			"pre-commit": "npm audit --production --json | ./node_modules/.bin/npm-audit-html && git add npm-audit.html"
+		}
+	},
+	"config": {
+		"commitizen": {
+			"path": "cz-conventional-changelog"
+		}
+	},
+	"np": {
+		"contents": ".",
+		"anyBranch": false
+	},
+	"adonisjs": {
+		"templates": {
+			"config": [
+				{
+					"src": "config.txt",
+					"dest": "bull"
+				}
+			],
+			"contracts": [
+				{
+					"src": "contract.txt",
+					"dest": "bull"
+				}
+			]
+		},
+		"types": "@rocketseat/adonis-bull",
+		"providers": [
+			"@rocketseat/adonis-bull"
+		],
+		"env": {
+			"REDIS_CONNECTION": "local",
+			"REDIS_HOST": "127.0.0.1",
+			"REDIS_PORT": "6379",
+			"REDIS_PASSWORD": ""
+		}
+	}
 }
