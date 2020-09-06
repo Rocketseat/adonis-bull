@@ -9,21 +9,20 @@ export default class BullProvider {
 
 	public register() {
 		this.container.singleton('Rocketseat/Bull', () => {
-			const Application = this.container.use('Adonis/Core/Application')
+			const app = this.container.use('Adonis/Core/Application')
 			const Logger = this.container.use('Adonis/Core/Logger')
-			const jobs = require(Application.startPath('jobs'))?.default || []
+			const Redis = this.container.use('Adonis/Addons/Redis')
 
+			const jobs = require(app.startPath('jobs'))?.default || []
 			const { BullManager } = require('../src/BullManager')
 
-			return new BullManager(this.container, Logger, jobs)
+			return new BullManager(this.container, Logger, Redis, jobs)
 		})
 
 		this.container.alias('Rocketseat/Bull', 'Bull')
 	}
 
-	public async boot() {
-		// All bindings are ready, feel free to use them
-	}
+	public async boot() {}
 
 	public async ready() {}
 
