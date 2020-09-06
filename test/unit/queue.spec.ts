@@ -126,31 +126,36 @@ test.group('Bull', () => {
 	})
 
 	test("shouldn't schedule when time is invalid", async (assert) => {
-		assert.plan(1)
 		const ioc = new Ioc()
 
-		ioc.bind('App/Jobs/TestBull', () => {
-			return class {
-				public queueName = 'TestBull-name'
+		ioc.bind('App/Jobs/TestBull', () => ({
+			queueName: 'TestBull-name',
+			async handle() {},
+		}))
 
-				public async handle() {}
-			}
-		})
+		const redis = (new RedisManager(
+			ioc,
+			{
+				connection: 'primary',
+				connections: {
+					primary: {
+						host: process.env.REDIS_HOST,
+						port: Number(process.env.REDIS_PORT),
+						healthCheck: true,
+					},
+				},
+			} as any,
+			new Emitter(ioc)
+		) as unknown) as RedisManagerContract
 
-		ioc.bind('Adonis/Core/Logger', () => new FakeLogger({} as any))
-		ioc.bind('Adonis/Addons/Redis', () => new RedisManager(ioc, {} as any, {} as any))
+		const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-		const loggerInstance = ioc.use('Adonis/Core/Logger')
-		const Redis = ioc.use('Adonis/Addons/Redis')
-
-		const bull = new BullManager(ioc, loggerInstance, Redis, ['App/Jobs/TestBull'])
-		const Job = ioc.use('App/Jobs/TestBull')
+		const bull = new BullManager(ioc, logger, redis, ['App/Jobs/TestBull'])
+		const jobDefinition = ioc.use('App/Jobs/TestBull')
 		const data = { test: 'data' }
 
-		try {
-			await bull.schedule(Job.key, data, -100)
-		} catch (err) {
-			assert.equal('Invalid schedule time', err.message)
-		}
+		assert.throw(() => {
+			bull.schedule(jobDefinition.queueName, data, -100)
+		}, 'Invalid schedule time')
 	})
 })
