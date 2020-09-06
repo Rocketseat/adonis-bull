@@ -50,7 +50,7 @@ export class BullManager implements BullManagerContract {
 	}
 
 	public getByKey(key: string): QueueContract {
-		return this._queues[key]
+		return this.queues[key]
 	}
 
 	public add<T>(name: string, data: T, jobOptions?: JobsOptions): Promise<BullJob<any, any>> {

@@ -52,6 +52,7 @@
 		"@adonisjs/application": "^2.0.0",
 		"@adonisjs/core": "^5.0.0-preview-rc-1.11",
 		"@adonisjs/fold": "^6.4.0",
+		"@adonisjs/logger": "^2.1.0",
 		"@adonisjs/mrm-preset": "^2.4.0",
 		"@adonisjs/redis": "^4.1.2",
 		"@types/node": "^14.0.27",
