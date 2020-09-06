@@ -1,21 +1,24 @@
 {
   "name": "@rocketseat/adonis-bull",
   "version": "0.2.2",
-  "main": "src/Queue.js",
+  "main": "build/providers/BullProvider.js",
   "license": "MIT",
   "scripts": {
     "test:local": "node japaFile.js",
     "test": "nyc npm run test:local",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "copyfiles": "copyfiles \"templates/**/*.txt\" build",
+    "compile": "tsc",
+    "build": "npm run compile && npm run copyfiles",
+    "lint": "eslint . --ext=.ts"
   },
   "nyc": {
     "exclude": [
-      "**/*.spec.js",
-      "bin"
+      "test"
+    ],
+    "extension": [
+      ".ts"
     ]
-  },
-  "directories": {
-    "test": "test"
   },
   "keywords": [
     "bull",
@@ -26,33 +29,64 @@
     "adonis-bull",
     "adonis-queue"
   ],
+  "bugs": {
+    "url": "https://github.com/rocketseat/adonis-bull/issues"
+  },
+  "homepage": "https://github.com/rocketseat/adonis-bull#readme",
+  "publishConfig": {
+    "access": "public",
+    "tag": "alpha"
+  },
   "devDependencies": {
-    "@adonisjs/ace": "^5.0.8",
-    "@adonisjs/fold": "^4.0.9",
-    "@adonisjs/sink": "^1.0.17",
+    "@adonisjs/ace": "^6.9.3",
+    "@adonisjs/application": "^2.0.0",
+    "@adonisjs/core": "^5.0.0-preview-rc-1.12",
+    "@adonisjs/fold": "^6.4.0",
+    "@adonisjs/logger": "^2.1.0",
+    "@adonisjs/mrm-preset": "^2.4.0",
+    "@types/node": "^14.6.1",
+    "@typescript-eslint/eslint-plugin": "^4.1.0",
+    "@typescript-eslint/parser": "^4.1.0",
+    "copyfiles": "^2.3.0",
     "coveralls": "^3.0.7",
-    "delay": "^4.3.0",
     "eslint": "^6.6.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "japa": "^3.0.1",
-    "nyc": "^14.1.1"
+    "japa": "^3.1.1",
+    "nyc": "^15.1.0",
+    "reflect-metadata": "^0.1.13",
+    "ts-node": "^9.0.0",
+    "typescript": "^3.9.7"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rocketseat/adonis-bull.git"
   },
-  "dependencies": {
-    "bull": "^3.12.0",
-    "bull-board": "0.7.0",
-    "date-fns": "^2.7.0",
-    "human-interval": "^0.1.6"
+  "peerDependencies": {
+    "@adonisjs/core": ">=5.0.0-preview"
   },
-  "resolutions": {
-    "**/**/minimist": "^1.2.3",
-    "**/**/set-value": "^3.0.1"
+  "dependencies": {
+    "bull-board": "^1.0.0-alpha.10",
+    "bullmq": "^1.9.0"
+  },
+  "files": [
+    "build/adonis-typings",
+    "build/commands",
+    "build/providers",
+    "build/src",
+    "build/templates"
+  ],
+  "types": "build/adonis-typings/index.d.ts",
+  "adonisjs": {
+    "types": "@rocketseat/adonis-bull",
+    "providers": [
+      "@rocketseat/adonis-bull"
+    ],
+    "commands": [
+      "@rocketseat/adonis-bull/build/commands"
+    ]
   }
 }

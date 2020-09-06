@@ -69,3 +69,10 @@ test/database
 
 
 # End of https://www.gitignore.io/api/node
+
+# builds
+build
+
+# IDE
+.idea
+.vscode
