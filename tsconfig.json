@@ -3,5 +3,8 @@
 	"compilerOptions": {
 		"esModuleInterop": true
 	},
-	"files": ["./node_modules/@adonisjs/core/build/adonis-typings/index.d.ts"]
+	"files": [
+		"./node_modules/@adonisjs/core/build/adonis-typings/index.d.ts",
+		"./node_modules/@adonisjs/redis/build/adonis-typings/index.d.ts",
+	]
 }

@@ -53,6 +53,7 @@
 		"@adonisjs/core": "^5.0.0-preview-rc-1.11",
 		"@adonisjs/fold": "^6.4.0",
 		"@adonisjs/mrm-preset": "^2.4.0",
+		"@adonisjs/redis": "^4.1.2",
 		"@types/node": "^14.0.27",
 		"commitizen": "^4.1.2",
 		"copyfiles": "^2.3.0",
@@ -77,7 +78,6 @@
 		"@adonisjs/redis": "^4.1.2"
 	},
 	"dependencies": {
-		"@poppinss/utils": "^2.5.2",
 		"bull-board": "^1.0.0-alpha.10",
 		"bullmq": "^1.9.0"
 	},
