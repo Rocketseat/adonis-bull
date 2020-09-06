@@ -92,27 +92,35 @@ test.group('Bull', () => {
 	test('should schedule a new job', async (assert) => {
 		const ioc = new Ioc()
 
-		ioc.bind('App/Jobs/TestBull', () => {
-			return class {
-				public queueName = 'TestBull-name'
+		ioc.bind('App/Jobs/TestBull', () => ({
+			queueName: 'TestBull-name',
+			async handle() {},
+		}))
 
-				public async handle() {}
-			}
-		})
+		const redis = (new RedisManager(
+			ioc,
+			{
+				connection: 'primary',
+				connections: {
+					primary: {
+						host: process.env.REDIS_HOST,
+						port: Number(process.env.REDIS_PORT),
+						healthCheck: true,
+					},
+				},
+			} as any,
+			new Emitter(ioc)
+		) as unknown) as RedisManagerContract
 
-		ioc.bind('Adonis/Core/Logger', () => new FakeLogger({} as any))
-		ioc.bind('Adonis/Addons/Redis', () => new RedisManager(ioc, {} as any, {} as any))
+		const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-		const loggerInstance = ioc.use('Adonis/Core/Logger')
-		const Redis = ioc.use('Adonis/Addons/Redis')
-
-		const bull = new BullManager(ioc, loggerInstance, Redis, ['App/Jobs/TestBull'])
-		const Job = ioc.use('App/Jobs/TestBull')
+		const bull = new BullManager(ioc, logger, redis, ['App/Jobs/TestBull'])
+		const jobDefinition = ioc.use('App/Jobs/TestBull')
 		const data = { test: 'data' }
 
-		const job = await bull.schedule(Job.key, data, 1000)
+		const job = await bull.schedule(jobDefinition.queueName, data, 1000)
 
-		assert.equal(Job.key, job.name)
+		assert.equal(jobDefinition.queueName, job.name)
 		assert.equal(job.opts.delay, 1000)
 		assert.deepEqual(data, job.data)
 	})
