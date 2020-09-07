@@ -6,7 +6,7 @@ import * as BullBoard from 'bull-board'
 import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
 
 export class BullManager implements BullManagerContract {
-  constructor(
+  constructor (
     protected container: IocContract,
     protected Logger: LoggerContract,
     protected Redis: RedisManagerContract,
@@ -16,7 +16,7 @@ export class BullManager implements BullManagerContract {
   private _queues: { [key: string]: QueueContract }
   private _shutdowns: (() => Promise<any>)[] = []
 
-  public get queues() {
+  public get queues () {
     if (this._queues) {
       return this._queues
     }
@@ -27,11 +27,11 @@ export class BullManager implements BullManagerContract {
       queues[jobDefinition.key] = Object.freeze({
         bull: new Queue(jobDefinition.key, {
           connection: this.Redis as any,
-          ...jobDefinition.queueOptions,
+          ...jobDefinition.queueOptions
         }),
         ...jobDefinition,
         handle: jobDefinition.handle,
-        boot: jobDefinition.boot,
+        boot: jobDefinition.boot
       })
 
       return queues
@@ -40,15 +40,15 @@ export class BullManager implements BullManagerContract {
     return this.queues
   }
 
-  public getByKey(key: string): QueueContract {
+  public getByKey (key: string): QueueContract {
     return this.queues[key]
   }
 
-  public add<T>(key: string, data: T, jobOptions?: JobsOptions): Promise<BullJob<any, any>> {
+  public add<T> (key: string, data: T, jobOptions?: JobsOptions): Promise<BullJob<any, any>> {
     return this.getByKey(key).bull.add(key, data, jobOptions)
   }
 
-  public schedule<T = any>(key: string, data: T, date: number | Date, options?: JobsOptions) {
+  public schedule<T = any> (key: string, data: T, date: number | Date, options?: JobsOptions) {
     const delay = typeof date === 'number' ? date : date.getTime() - Date.now()
 
     if (delay <= 0) {
@@ -58,12 +58,12 @@ export class BullManager implements BullManagerContract {
     return this.add(key, data, { ...options, delay })
   }
 
-  public async remove(key: string, jobId: string): Promise<void> {
+  public async remove (key: string, jobId: string): Promise<void> {
     const job = await this.getByKey(key).bull.getJob(jobId)
     return job?.remove()
   }
 
-  public ui(port = 9999) {
+  public ui (port = 9999) {
     BullBoard.setQueues(Object.keys(this.queues).map((key) => this.getByKey(key).bull))
 
     const server = BullBoard.router.listen(port, () => {
@@ -79,7 +79,7 @@ export class BullManager implements BullManagerContract {
     this._shutdowns = [...this._shutdowns, shutdown]
   }
 
-  public process() {
+  public process () {
     this.Logger.info('Queue processing started')
 
     const shutdowns = Object.keys(this.queues).map((key) => {
@@ -92,7 +92,7 @@ export class BullManager implements BullManagerContract {
       const workerOptions: WorkerOptions = {
         concurrency: jobDefinition.concurrency ?? 1,
         connection: this.Redis as any,
-        ...jobDefinition.workerOptions,
+        ...jobDefinition.workerOptions
       }
 
       const processor: Processor = async (job) => {
@@ -111,7 +111,7 @@ export class BullManager implements BullManagerContract {
     return this
   }
 
-  public async shutdown() {
+  public async shutdown () {
     await Promise.all(this._shutdowns.map((shutdown) => shutdown()))
   }
 }

@@ -25,9 +25,9 @@ test.group('Provider', () => {
             primary: {
               host: '127.0.0.1',
               port: 6379,
-              healthCheck: true,
-            },
-          },
+              healthCheck: true
+            }
+          }
         } as any,
         new Emitter(ioc)
       )

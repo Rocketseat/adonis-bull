@@ -5,9 +5,9 @@ import { BullManagerContract } from '@ioc:Rocketseat/Bull'
  * Provider to bind bull to the container
  */
 export default class BullProvider {
-  constructor(protected container: IocContract) {}
+  constructor (protected container: IocContract) {}
 
-  public register() {
+  public register () {
     this.container.singleton('Rocketseat/Bull', () => {
       const app = this.container.use('Adonis/Core/Application')
       const Logger = this.container.use('Adonis/Core/Logger')
@@ -22,7 +22,7 @@ export default class BullProvider {
     this.container.alias('Rocketseat/Bull', 'Bull')
   }
 
-  public async shutdown() {
+  public async shutdown () {
     await this.container.use<BullManagerContract>('Rocketseat/Bull').shutdown()
   }
 }

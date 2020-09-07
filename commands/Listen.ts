@@ -5,7 +5,7 @@ import { BullManagerContract } from '@ioc:Rocketseat/Bull'
 export default class Listen extends BaseCommand {
   public static commandName = 'bull:listen'
   public static description = 'Start the Bull listener'
-  constructor(app: ApplicationContract, kernel: Kernel, private bull: BullManagerContract) {
+  constructor (app: ApplicationContract, kernel: Kernel, private bull: BullManagerContract) {
     super(app, kernel)
   }
 
@@ -24,7 +24,7 @@ export default class Listen extends BaseCommand {
   /**
    * Execute command
    */
-  public async handle(): Promise<void> {
+  public async handle (): Promise<void> {
     this.bull.process()
 
     if (this.board || (typeof this.board === 'undefined' && typeof this.port !== 'undefined')) {

@@ -14,7 +14,7 @@ export default class MakeJob extends BaseCommand {
   /**
    * Execute command
    */
-  public async handle(): Promise<void> {
+  public async handle (): Promise<void> {
     const stub = join(__dirname, '..', 'templates', 'job.txt')
 
     const path = this.application.resolveNamespaceDirectory('jobs')

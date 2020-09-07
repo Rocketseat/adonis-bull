@@ -19,7 +19,7 @@ test.group('Bull', () => {
     ioc.bind('App/Jobs/TestBull', () => ({
       key: 'TestBull-name',
       concurrency: 2,
-      async handle() {},
+      async handle () {}
     }))
 
     const redis = (new RedisManager(
@@ -30,9 +30,9 @@ test.group('Bull', () => {
           primary: {
             host: '127.0.0.1',
             port: 6379,
-            healthCheck: true,
-          },
-        },
+            healthCheck: true
+          }
+        }
       } as any,
       new Emitter(ioc)
     ) as unknown) as RedisManagerContract
@@ -62,10 +62,10 @@ test.group('Bull', () => {
     ioc.bind('App/Jobs/TestBull', () => ({
       key: 'TestBull-name',
       concurrency: 2,
-      async handle() {},
-      boot(queue) {
+      async handle () {},
+      boot (queue) {
         assert.isOk(queue)
-      },
+      }
     }))
 
     const redis = (new RedisManager(
@@ -76,9 +76,9 @@ test.group('Bull', () => {
           primary: {
             host: '127.0.0.1',
             port: 6379,
-            healthCheck: true,
-          },
-        },
+            healthCheck: true
+          }
+        }
       } as any,
       new Emitter(ioc)
     ) as unknown) as RedisManagerContract
@@ -102,7 +102,7 @@ test.group('Bull', () => {
     ioc.singleton('App/Jobs/TestBull', () => {
       return new (class Job implements JobContract {
         public key = 'TestBull-name'
-        public async handle() {
+        public async handle () {
           return expectedResponse
         }
       })()
@@ -116,9 +116,9 @@ test.group('Bull', () => {
           primary: {
             host: '127.0.0.1',
             port: 6379,
-            healthCheck: true,
-          },
-        },
+            healthCheck: true
+          }
+        }
       } as any,
       new Emitter(ioc)
     ) as unknown) as RedisManagerContract
@@ -156,7 +156,7 @@ test.group('Bull', () => {
       () =>
         new (class Job implements JobContract {
           public key = 'TestBull-name'
-          public async handle() {}
+          public async handle () {}
         })()
     )
 
@@ -168,9 +168,9 @@ test.group('Bull', () => {
           primary: {
             host: '127.0.0.1',
             port: 6379,
-            healthCheck: true,
-          },
-        },
+            healthCheck: true
+          }
+        }
       } as any,
       new Emitter(ioc)
     ) as unknown) as RedisManagerContract
@@ -194,7 +194,7 @@ test.group('Bull', () => {
 
     ioc.bind('App/Jobs/TestBull', () => ({
       key: 'TestBull-name',
-      async handle() {},
+      async handle () {}
     }))
 
     const redis = (new RedisManager(
@@ -205,9 +205,9 @@ test.group('Bull', () => {
           primary: {
             host: '127.0.0.1',
             port: 6379,
-            healthCheck: true,
-          },
-        },
+            healthCheck: true
+          }
+        }
       } as any,
       new Emitter(ioc)
     ) as unknown) as RedisManagerContract
