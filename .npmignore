@@ -9,3 +9,4 @@ benchmarks
 .idea
 bin
 out
+.nyc_output
