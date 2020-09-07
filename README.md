@@ -9,7 +9,7 @@
 
 ## Install
 
-You need [install Redis Provider](https://preview.adonisjs.com/guides/database/redis/#setup) before install this package.
+You need [install Redis Provider](https://preview.adonisjs.com/guides/database/redis/#setup) before installing this package.
 
 YARN
 
