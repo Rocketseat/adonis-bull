@@ -7,8 +7,8 @@ declare module '@ioc:Rocketseat/Bull' {
     workerOptions?: WorkerOptions
     queueOptions?: QueueOptions
     concurrency?: number
-    handle(data: T): Promise<any>
-    boot?: (queue: Queue) => void
+    handle: Processor
+    boot?: (queue: Queue<T>) => void
   }
 
   export interface QueueContract<T = any> extends JobContract<T> {
