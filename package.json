@@ -1,29 +1,15 @@
 {
   "name": "@rocketseat/adonis-bull",
   "version": "0.2.2",
-  "license": "MIT",
-  "description": "AdonisJS addon for Bull",
   "main": "build/providers/BullProvider.js",
-  "files": [
-    "build/adonis-typings",
-    "build/commands",
-    "build/providers",
-    "build/src",
-    "build/templates"
-  ],
-  "types": "build/adonis-typings/index.d.ts",
+  "license": "MIT",
   "scripts": {
-    "pretest": "npm run lint",
-    "test:docker": "docker-compose build && docker-compose run --rm tests",
-    "test": "node japaFile.js",
-    "coverage:local": "nyc npm run test",
-    "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
-    "clean": "del build",
+    "test:local": "node japaFile.js",
+    "test": "nyc npm run test:local",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
     "copyfiles": "copyfiles \"templates/**/*.txt\" build",
-    "compile": "npm run lint && npm run clean && tsc",
+    "compile": "tsc",
     "build": "npm run compile && npm run copyfiles",
-    "version": "npm run build",
-    "prepublishOnly": "npm run build",
     "lint": "eslint . --ext=.ts"
   },
   "nyc": {
@@ -59,18 +45,15 @@
     "@adonisjs/logger": "^2.1.0",
     "@adonisjs/mrm-preset": "^2.4.0",
     "@adonisjs/redis": "^4.1.2",
-    "@poppinss/dev-utils": "^1.0.8",
     "@types/node": "^14.6.1",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",
     "copyfiles": "^2.3.0",
-    "coveralls": "^3.1.0",
-    "cz-conventional-changelog": "^3.3.0",
-    "del-cli": "^3.0.1",
-    "eslint": "^7.8.1",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-node": "^11.1.0",
+    "coveralls": "^3.0.7",
+    "eslint": "^6.6.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "japa": "^3.1.1",
@@ -91,6 +74,14 @@
     "bull-board": "^1.0.0-alpha.10",
     "bullmq": "^1.9.0"
   },
+  "files": [
+    "build/adonis-typings",
+    "build/commands",
+    "build/providers",
+    "build/src",
+    "build/templates"
+  ],
+  "types": "build/adonis-typings/index.d.ts",
   "adonisjs": {
     "types": "@rocketseat/adonis-bull",
     "providers": [
