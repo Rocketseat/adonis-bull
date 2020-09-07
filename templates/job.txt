@@ -1,22 +1,22 @@
 import { JobContract } from '@ioc:Rocketseat/Bull'
 
 export default class {{ filename }} implements JobContract {
-	public key = '{{ filename }}'
+  public key = '{{ filename }}'
 
-	// public options = {}
+  // public options = {}
 
-	// public queueOptions = {}
+  // public queueOptions = {}
 
-	// public workerOptions = {}
+  // public workerOptions = {}
 
-	// public concurrency = 1
+  // public concurrency = 1
 
-	public async handle(job) {
-		const { data } = job
-		// Do somethign with you job data
-	}
+  public async handle(job) {
+    const { data } = job
+    // Do somethign with you job data
+  }
 
-	// public boot(queue) {
-	// 	// Fired before start process
-	// }
+  // public boot(queue) {
+  //   // Fired before start process
+  // }
 }
