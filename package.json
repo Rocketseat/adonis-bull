@@ -27,9 +27,13 @@
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rocketseat/adonis-bull.git"
+  "nyc": {
+    "exclude": [
+      "test"
+    ],
+    "extension": [
+      ".ts"
+    ]
   },
   "keywords": [
     "bull",
@@ -73,6 +77,10 @@
     "ts-node": "^9.0.0",
     "typescript": "^3.9.7"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rocketseat/adonis-bull.git"
+  },
   "peerDependencies": {
     "@adonisjs/core": ">=5.0.0-preview",
     "@adonisjs/redis": ">=4.0.0"
@@ -80,14 +88,6 @@
   "dependencies": {
     "bull-board": "^1.0.0-alpha.10",
     "bullmq": "^1.9.0"
-  },
-  "nyc": {
-    "exclude": [
-      "test"
-    ],
-    "extension": [
-      ".ts"
-    ]
   },
   "adonisjs": {
     "types": "@rocketseat/adonis-bull",
