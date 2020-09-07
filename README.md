@@ -35,6 +35,34 @@ const jobs = ["App/Jobs/UserRegisterEmail"]
 export default jobs
 ```
 
+Or use the magic way, it will declare all jobs for you:
+
+```ts
+import { listDirectoryFiles } from '@adonisjs/ace'
+import Application from '@ioc:Adonis/Core/Application'
+import { join } from 'path'
+
+/*
+|--------------------------------------------------------------------------
+| Exporting an array of jobs
+|--------------------------------------------------------------------------
+|
+| Instead of manually exporting each file from the app/Jobs directory, we
+| use the helper `listDirectoryFiles` to recursively collect and export
+| an array of filenames.
+*/
+const jobs = listDirectoryFiles(
+  join(Application.appRoot, 'app/Jobs'),
+  Application.appRoot
+).map((name) => {
+  return name
+    .replace(/^\.\/app\/Jobs\//, 'App/Jobs/')
+    .replace(/\.(?:t|j)s$/, '')
+})
+
+export default jobs
+```
+
 Create a new preload file by executing the following ace command.
 
 ```bash
