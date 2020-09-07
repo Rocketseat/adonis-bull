@@ -25,6 +25,8 @@ npm install @rocketseat/adonis-bull
 
 ## Use
 
+First, configure Redis by following this guide: https://preview.adonisjs.com/guides/database/redis/
+
 Create a file with the `jobs` that will be processed at `start/jobs.ts`:
 
 ```ts
@@ -32,8 +34,6 @@ const jobs = ["App/Jobs/UserRegisterEmail"]
 
 export default jobs
 ```
-
-In the above file you can define redis connections, there you can pass all `Bull` queue configurations described [here](https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queue).
 
 Create a new preload file by executing the following ace command.
 
