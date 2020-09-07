@@ -202,12 +202,19 @@ This `job` will be run at 12:30 PM, only on wednesdays and fridays.
 
 ### Exceptions
 
-To have a bigger control over errors that might occur on the line, the events that fail can be manipulated at the file `app/Exceptions/BullHandler.ts`:
+To have a bigger control over errors that might occur on the line, the events that fail can be manipulated at the file `app/Exceptions/Handler.ts`:
 
-```js
+```ts
 import Sentry from 'App/Services/Sentry'
 
-export default class BullHandler {
+import Logger from '@ioc:Adonis/Core/Logger'
+import HttpExceptionHandler from '@ioc:Adonis/Core/HttpExceptionHandler'
+
+export default class ExceptionHandler extends HttpExceptionHandler {
+  constructor () {
+    super(Logger)
+  }
+
   async report(error, job) {
     Sentry.configureScope(scope => {
       scope.setExtra(job);
