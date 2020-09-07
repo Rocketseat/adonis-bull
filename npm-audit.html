@@ -15,7 +15,7 @@
         href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/atom-one-dark.min.css">
 
     <title>NPM Audit Report</title>
-    <meta name="description" content="2 known vulnerabilities found.">
+    <meta name="description" content="0 known vulnerabilities found.">
 
     <style>
         pre {
@@ -39,7 +39,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">
-                            2
+                            0
                         </h5>
                         <p class="card-text">Known vulnerabilities</p>
                     </div>
@@ -47,7 +47,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">
-                            109
+                            103
                         </h5>
                         <p class="card-text">Dependencies</p>
                     </div>
@@ -55,7 +55,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">
-                            September 6th 2020, 9:59:30 pm
+                            September 7th 2020, 12:04:45 am
                         </h5>
                         <p class="card-text">Last updated</p>
                     </div>
@@ -95,7 +95,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">
-                            2
+                            0
                         </h5>
                         <p class="card-text">
                             <span class="badge badge-primary">low</span>
@@ -128,21 +128,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">
-                                <a href="https://npmjs.com/advisories/1523" data-toggle="modal" data-target="#advisory-modal-1523">Prototype Pollution</a>
-                            </th>
-                            <td>
-                                <a href="https://npmjs.com/package/lodash" target="_blank"
-                                    rel="noopener">lodash</a>
-                            </td>
-                            <td data-order="4"><span
-                                    class="badge badge-primary">low</span></td>
-                            <td>
-                                CWE-471
-                                , CVE-2019-10744
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -150,71 +135,6 @@
     </div>
 
 
-    <div class="modal" tabindex="-1" role="dialog" id="advisory-modal-1523">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <span class="badge badge-primary">low</span>
-                        Prototype Pollution
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <ul>
-                                <li>Module:
-                                    <a href="https://npmjs.com/package/lodash" target="_blank"
-                                        rel="noopener">lodash</a>
-                                </li>
-                                <li>Published: May 20th 2020 </li>
-                                <li>Reported by: posix</li>
-                                <li>CWE-471</li>
-                                <li>CVE-2019-10744</li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6">
-                            <ul>
-                                <li>Vulnerable: &lt;4.17.19</li>
-                                <li>Patched: &gt;&#x3D;4.17.19</li>
-                                <li>Exploitability: 3</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <h3>Overview</h3>
-                    <p class="card-text"><p>Versions of <code>lodash</code> prior to 4.17.19 are vulnerable to Prototype Pollution.  The function <code>zipObjectDeep</code> allows a malicious user to modify the prototype of <code>Object</code> if the property identifiers are user-supplied. Being affected by this issue requires zipping objects based on user-provided property arrays.  </p>
-<p>This vulnerability causes the addition or modification of an existing property that will exist on all objects and may lead to Denial of Service or Code Execution under specific circumstances.</p>
-</p>
-
-                    <h3>Findings</h3>
-                    <ul>
-                        <li>bull-board&gt;redis-info&gt;lodash </li>
-                        <li>bullmq&gt;lodash </li>
-                    </ul>
-
-                    <h3>Remediation</h3>
-                    <p class="card-text"><p>Upgrade to version 4.17.19 or later.</p>
-</p>
-                     
-                    <h3>References</h3>
-                    <p class="card-text"><ul>
-<li><a href="https://hackerone.com/reports/712065">HackerOne Report</a></li>
-<li><a href="https://github.com/lodash/lodash/issues/4744">GitHub Issue</a></li>
-</ul>
-</p>
-                     
-                </div>
-                <div class="modal-footer">
-                    <a class="btn btn-raised mr-2 btn-primary" href="https://npmjs.com/advisories/1523" target="_blank" rel="noopener">More about
-                        this vulnerability</a>
-                    <button type="button" class="btn btn-raised btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
