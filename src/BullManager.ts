@@ -16,10 +16,6 @@ export class BullManager implements BullManagerContract {
 	private _queues: { [key: string]: QueueContract }
 	private _shutdowns: (() => Promise<any>)[] = []
 
-	private _getQueueNameFromPath(path: string) {
-		return path.replace(/^App\/Jobs\//, '')
-	}
-
 	public get queues() {
 		if (this._queues) {
 			return this._queues
@@ -28,14 +24,12 @@ export class BullManager implements BullManagerContract {
 		this._queues = this.jobs.reduce((queues, path) => {
 			const job: JobContract = this.container.make(path)
 
-			const queueName = job.queueName ?? this._getQueueNameFromPath(path)
-
-			queues[queueName] = {
-				bull: new Queue(queueName, {
+			queues[job.key] = {
+				bull: new Queue(job.key, {
 					connection: this.Redis as any,
 					...job.queueOptions,
 				}),
-				name: queueName,
+				name: job.key,
 				handle: job.handle,
 				boot: job.boot,
 				concurrency: job.concurrency || 1,

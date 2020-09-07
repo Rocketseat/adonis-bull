@@ -14,7 +14,7 @@ test.group('Bull', () => {
 		const ioc = new Ioc()
 
 		ioc.bind('App/Jobs/TestBull', () => ({
-			queueName: 'TestBull-name',
+			key: 'TestBull-name',
 			concurrency: 2,
 			async handle() {},
 		}))
@@ -40,11 +40,11 @@ test.group('Bull', () => {
 		const jobDefinition = ioc.use('App/Jobs/TestBull')
 		const data = { test: 'data' }
 
-		const queue = bull.getByKey(jobDefinition.queueName)
-		const job = await bull.add(jobDefinition.queueName, data)
+		const queue = bull.getByKey(jobDefinition.key)
+		const job = await bull.add(jobDefinition.key, data)
 
 		assert.isDefined(job)
-		assert.equal(jobDefinition.queueName, job.name)
+		assert.equal(jobDefinition.key, job.name)
 		assert.deepEqual(data, job.data)
 		assert.equal(queue.concurrency, 2)
 
@@ -56,7 +56,7 @@ test.group('Bull', () => {
 		assert.plan(1)
 
 		ioc.bind('App/Jobs/TestBull', () => ({
-			queueName: 'TestBull-name',
+			key: 'TestBull-name',
 			concurrency: 2,
 			async handle() {},
 			boot(queue) {
@@ -85,7 +85,7 @@ test.group('Bull', () => {
 		const jobDefinition = ioc.use('App/Jobs/TestBull')
 		const data = { test: 'data' }
 
-		bull.add(jobDefinition.queueName, data)
+		bull.add(jobDefinition.key, data)
 		bull.process()
 	})
 
@@ -93,7 +93,7 @@ test.group('Bull', () => {
 		const ioc = new Ioc()
 
 		ioc.bind('App/Jobs/TestBull', () => ({
-			queueName: 'TestBull-name',
+			key: 'TestBull-name',
 			async handle() {},
 		}))
 
@@ -118,9 +118,9 @@ test.group('Bull', () => {
 		const jobDefinition = ioc.use('App/Jobs/TestBull')
 		const data = { test: 'data' }
 
-		const job = await bull.schedule(jobDefinition.queueName, data, 1000)
+		const job = await bull.schedule(jobDefinition.key, data, 1000)
 
-		assert.equal(jobDefinition.queueName, job.name)
+		assert.equal(jobDefinition.key, job.name)
 		assert.equal(job.opts.delay, 1000)
 		assert.deepEqual(data, job.data)
 	})
@@ -129,7 +129,7 @@ test.group('Bull', () => {
 		const ioc = new Ioc()
 
 		ioc.bind('App/Jobs/TestBull', () => ({
-			queueName: 'TestBull-name',
+			key: 'TestBull-name',
 			async handle() {},
 		}))
 
@@ -155,7 +155,7 @@ test.group('Bull', () => {
 		const data = { test: 'data' }
 
 		assert.throw(() => {
-			bull.schedule(jobDefinition.queueName, data, -100)
+			bull.schedule(jobDefinition.key, data, -100)
 		}, 'Invalid schedule time')
 	})
 })

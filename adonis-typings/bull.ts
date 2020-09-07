@@ -2,7 +2,7 @@ declare module '@ioc:Rocketseat/Bull' {
 	import { Queue, Processor, JobsOptions, QueueOptions, WorkerOptions, Job } from 'bullmq'
 
 	export interface JobContract<T = any> {
-		queueName?: string
+		key: string
 		options?: JobsOptions
 		workerOptions?: WorkerOptions
 		queueOptions?: QueueOptions
