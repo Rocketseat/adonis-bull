@@ -8,6 +8,9 @@ import { RedisManager } from '@adonisjs/redis/build/src/RedisManager'
 import { Emitter } from '@adonisjs/events/build/standalone'
 import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
+import { JobContract } from '@ioc:Rocketseat/Bull'
+
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 test.group('Bull', () => {
   test('should add a new job', async (assert) => {
@@ -25,8 +28,8 @@ test.group('Bull', () => {
         connection: 'primary',
         connections: {
           primary: {
-            host: process.env.REDIS_HOST,
-            port: Number(process.env.REDIS_PORT),
+            host: '127.0.0.1',
+            port: 6379,
             healthCheck: true,
           },
         },
@@ -48,6 +51,7 @@ test.group('Bull', () => {
     assert.deepEqual(data, job.data)
     assert.equal(queue.concurrency, 2)
 
+    await bull.shutdown()
     await redis.quit('primary')
   })
 
@@ -70,8 +74,8 @@ test.group('Bull', () => {
         connection: 'primary',
         connections: {
           primary: {
-            host: process.env.REDIS_HOST,
-            port: Number(process.env.REDIS_PORT),
+            host: '127.0.0.1',
+            port: 6379,
             healthCheck: true,
           },
         },
@@ -87,15 +91,22 @@ test.group('Bull', () => {
 
     bull.add(jobDefinition.key, data)
     bull.process()
+    await bull.shutdown()
+    await redis.quit('primary')
   })
 
-  test('should schedule a new job', async (assert) => {
+  test('should execute the job handler inside Job class', async (assert) => {
     const ioc = new Ioc()
+    const expectedResponse = Date.now()
 
-    ioc.bind('App/Jobs/TestBull', () => ({
-      key: 'TestBull-name',
-      async handle() {},
-    }))
+    ioc.singleton('App/Jobs/TestBull', () => {
+      return new (class Job implements JobContract {
+        public key = 'TestBull-name'
+        public async handle() {
+          return expectedResponse
+        }
+      })()
+    })
 
     const redis = (new RedisManager(
       ioc,
@@ -103,8 +114,60 @@ test.group('Bull', () => {
         connection: 'primary',
         connections: {
           primary: {
-            host: process.env.REDIS_HOST,
-            port: Number(process.env.REDIS_PORT),
+            host: '127.0.0.1',
+            port: 6379,
+            healthCheck: true,
+          },
+        },
+      } as any,
+      new Emitter(ioc)
+    ) as unknown) as RedisManagerContract
+
+    await redis.flushall()
+
+    const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
+
+    const bull = new BullManager(ioc, logger, redis, ['App/Jobs/TestBull'])
+    const jobDefinition = ioc.use('App/Jobs/TestBull')
+    const data = { test: 'data' }
+
+    const queue = bull.getByKey(jobDefinition.key)
+
+    bull.process()
+
+    let job = await bull.add(jobDefinition.key, data)
+    await delay(500)
+
+    job = (await queue.bull.getJob(job.id!))!
+
+    assert.deepEqual(ioc.use('App/Jobs/TestBull'), ioc.use('App/Jobs/TestBull'))
+    assert.deepEqual(job.data, data)
+    assert.deepEqual(job.returnvalue, expectedResponse)
+
+    await bull.shutdown()
+    await redis.quit('primary')
+  })
+
+  test('should schedule a new job', async (assert) => {
+    const ioc = new Ioc()
+
+    ioc.bind(
+      'App/Jobs/TestBull',
+      () =>
+        new (class Job implements JobContract {
+          public key = 'TestBull-name'
+          public async handle() {}
+        })()
+    )
+
+    const redis = (new RedisManager(
+      ioc,
+      {
+        connection: 'primary',
+        connections: {
+          primary: {
+            host: '127.0.0.1',
+            port: 6379,
             healthCheck: true,
           },
         },
@@ -123,9 +186,10 @@ test.group('Bull', () => {
     assert.equal(jobDefinition.key, job.name)
     assert.equal(job.opts.delay, 1000)
     assert.deepEqual(data, job.data)
+    await redis.quit('primary')
   })
 
-  test("shouldn't schedule when time is invalid", async (assert) => {
+  test('should not schedule when time is invalid', async (assert) => {
     const ioc = new Ioc()
 
     ioc.bind('App/Jobs/TestBull', () => ({
@@ -139,8 +203,8 @@ test.group('Bull', () => {
         connection: 'primary',
         connections: {
           primary: {
-            host: process.env.REDIS_HOST,
-            port: Number(process.env.REDIS_PORT),
+            host: '127.0.0.1',
+            port: 6379,
             healthCheck: true,
           },
         },
@@ -157,5 +221,8 @@ test.group('Bull', () => {
     assert.throw(() => {
       bull.schedule(jobDefinition.key, data, -100)
     }, 'Invalid schedule time')
+
+    await bull.shutdown()
+    await redis.quit('primary')
   })
 })

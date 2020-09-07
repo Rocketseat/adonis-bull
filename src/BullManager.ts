@@ -1,7 +1,7 @@
 import { IocContract } from '@adonisjs/fold'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { BullManagerContract, JobContract, QueueContract } from '@ioc:Rocketseat/Bull'
-import { Queue, JobsOptions, Job as BullJob, Worker, WorkerOptions } from 'bullmq'
+import { Queue, JobsOptions, Job as BullJob, Worker, WorkerOptions, Processor } from 'bullmq'
 import * as BullBoard from 'bull-board'
 import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
 
@@ -24,13 +24,15 @@ export class BullManager implements BullManagerContract {
     this._queues = this.jobs.reduce((queues, path) => {
       const jobDefinition: JobContract = this.container.make(path)
 
-      queues[jobDefinition.key] = {
+      queues[jobDefinition.key] = Object.freeze({
         bull: new Queue(jobDefinition.key, {
           connection: this.Redis as any,
           ...jobDefinition.queueOptions,
         }),
         ...jobDefinition,
-      }
+        handle: jobDefinition.handle,
+        boot: jobDefinition.boot,
+      })
 
       return queues
     }, {})
@@ -81,25 +83,25 @@ export class BullManager implements BullManagerContract {
     this.Logger.info('Queue processing started')
 
     const shutdowns = Object.keys(this.queues).map((key) => {
-      const queue = this.getByKey(key)
+      const jobDefinition = this.getByKey(key)
 
-      if (typeof queue.boot !== 'undefined') {
-        queue.boot(queue.bull)
+      if (typeof jobDefinition.boot !== 'undefined') {
+        jobDefinition.boot(jobDefinition.bull)
       }
 
       const workerOptions: WorkerOptions = {
-        concurrency: queue.concurrency ?? 1,
+        concurrency: jobDefinition.concurrency ?? 1,
         connection: this.Redis as any,
-        ...queue.workerOptions,
+        ...jobDefinition.workerOptions,
       }
 
-      const processor = async (job: BullJob) => {
-        await queue.handle(job)
+      const processor: Processor = async (job) => {
+        return jobDefinition.handle(job)
       }
 
       const worker = new Worker(key, processor, workerOptions)
 
-      const shutdown = () => Promise.all([queue.bull.close(), worker.close()])
+      const shutdown = () => Promise.all([jobDefinition.bull.close(), worker.close()])
 
       return shutdown
     })
