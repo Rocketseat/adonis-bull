@@ -3,9 +3,10 @@
 	"version": "0.2.2",
 	"license": "MIT",
 	"description": "AdonisJS addon for Bull",
-	"main": "build/providers/Bull.js",
+	"main": "build/providers/BullProvider.js",
 	"files": [
 		"build/adonis-typings",
+		"build/commands",
 		"build/providers",
 		"build/src",
 		"build/templates"
@@ -49,34 +50,37 @@
 		"tag": "alpha"
 	},
 	"devDependencies": {
+		"@adonisjs/ace": "^6.9.3",
 		"@adonisjs/application": "^2.0.0",
-		"@adonisjs/core": "^5.0.0-preview-rc-1.11",
+		"@adonisjs/core": "^5.0.0-preview-rc-1.12",
 		"@adonisjs/fold": "^6.4.0",
 		"@adonisjs/logger": "^2.1.0",
 		"@adonisjs/mrm-preset": "^2.4.0",
 		"@adonisjs/redis": "^4.1.2",
-		"@types/node": "^14.0.27",
-		"commitizen": "^4.1.2",
+		"@poppinss/dev-utils": "^1.0.8",
+		"@types/node": "^14.6.1",
+		"commitizen": "^4.2.1",
 		"copyfiles": "^2.3.0",
-		"cz-conventional-changelog": "^3.2.0",
+		"cz-conventional-changelog": "^3.3.0",
 		"del-cli": "^3.0.1",
-		"eslint": "^7.6.0",
+		"eslint": "^7.7.0",
 		"eslint-config-prettier": "^6.11.0",
 		"eslint-plugin-adonis": "^1.0.14",
 		"eslint-plugin-prettier": "^3.1.4",
 		"github-label-sync": "^2.0.0",
 		"husky": "^4.2.5",
 		"japa": "^3.1.1",
-		"mrm": "^2.3.3",
+		"mrm": "^2.3.5",
 		"np": "^6.3.2",
 		"npm-audit-html": "^1.4.3",
-		"prettier": "^2.0.5",
-		"ts-node": "^8.10.2",
+		"prettier": "^2.1.1",
+		"reflect-metadata": "^0.1.13",
+		"ts-node": "^9.0.0",
 		"typescript": "^3.9.7"
 	},
 	"peerDependencies": {
-		"@adonisjs/core": "^5.0.0-preview-rc",
-		"@adonisjs/redis": "^4.1.2"
+		"@adonisjs/core": ">=5.0.0-preview",
+		"@adonisjs/redis": ">=4.0.0"
 	},
 	"dependencies": {
 		"bull-board": "^1.0.0-alpha.10",
@@ -106,29 +110,12 @@
 		"anyBranch": false
 	},
 	"adonisjs": {
-		"templates": {
-			"config": [
-				{
-					"src": "config.txt",
-					"dest": "bull"
-				}
-			],
-			"contracts": [
-				{
-					"src": "contract.txt",
-					"dest": "bull"
-				}
-			]
-		},
 		"types": "@rocketseat/adonis-bull",
 		"providers": [
 			"@rocketseat/adonis-bull"
 		],
-		"env": {
-			"REDIS_CONNECTION": "local",
-			"REDIS_HOST": "127.0.0.1",
-			"REDIS_PORT": "6379",
-			"REDIS_PASSWORD": ""
-		}
+		"commands": [
+			"@rocketseat/adonis-bull/build/commands"
+		]
 	}
 }
