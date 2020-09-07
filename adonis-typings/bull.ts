@@ -11,16 +11,8 @@ declare module '@ioc:Rocketseat/Bull' {
 		boot?: (queue: Queue) => void
 	}
 
-	export interface QueueContract<T = any> {
+	export interface QueueContract<T = any> extends JobContract<T> {
 		bull: Queue<T>
-		Job: JobContract
-		name: string
-		handle: Processor
-		boot?: (queue: Queue) => void
-		concurrency: number
-		workerOptions?: WorkerOptions
-		queueOptions?: QueueOptions
-		options?: JobsOptions
 	}
 
 	export interface BullManagerContract {

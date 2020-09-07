@@ -22,20 +22,14 @@ export class BullManager implements BullManagerContract {
 		}
 
 		this._queues = this.jobs.reduce((queues, path) => {
-			const job: JobContract = this.container.make(path)
+			const jobDefinition: JobContract = this.container.make(path)
 
-			queues[job.key] = {
-				bull: new Queue(job.key, {
+			queues[jobDefinition.key] = {
+				bull: new Queue(jobDefinition.key, {
 					connection: this.Redis as any,
-					...job.queueOptions,
+					...jobDefinition.queueOptions,
 				}),
-				name: job.key,
-				handle: job.handle,
-				boot: job.boot,
-				concurrency: job.concurrency || 1,
-				options: job.options,
-				queueOptions: job.queueOptions,
-				workerOptions: job.workerOptions,
+				...jobDefinition,
 			}
 
 			return queues
@@ -48,27 +42,27 @@ export class BullManager implements BullManagerContract {
 		return this.queues[key]
 	}
 
-	public add<T>(name: string, data: T, jobOptions?: JobsOptions): Promise<BullJob<any, any>> {
-		return this.getByKey(name).bull.add(name, data, jobOptions)
+	public add<T>(key: string, data: T, jobOptions?: JobsOptions): Promise<BullJob<any, any>> {
+		return this.getByKey(key).bull.add(key, data, jobOptions)
 	}
 
-	public schedule<T = any>(name: string, data: T, date: number | Date, options?: JobsOptions) {
+	public schedule<T = any>(key: string, data: T, date: number | Date, options?: JobsOptions) {
 		const delay = typeof date === 'number' ? date : date.getTime() - Date.now()
 
 		if (delay <= 0) {
 			throw new Error('Invalid schedule time')
 		}
 
-		return this.add(name, data, { ...options, delay })
+		return this.add(key, data, { ...options, delay })
 	}
 
-	public async remove(name: string, jobId: string): Promise<void> {
-		const job = await this.getByKey(name).bull.getJob(jobId)
+	public async remove(key: string, jobId: string): Promise<void> {
+		const job = await this.getByKey(key).bull.getJob(jobId)
 		return job?.remove()
 	}
 
 	public ui(port = 9999) {
-		BullBoard.setQueues(Object.keys(this.queues).map((name) => this.getByKey(name).bull))
+		BullBoard.setQueues(Object.keys(this.queues).map((key) => this.getByKey(key).bull))
 
 		const server = BullBoard.router.listen(port, () => {
 			this.Logger.info(`bull board on http://localhost:${port}`)
@@ -86,15 +80,15 @@ export class BullManager implements BullManagerContract {
 	public process() {
 		this.Logger.info('Queue processing started')
 
-		const shutdowns = Object.keys(this.queues).map((name) => {
-			const queue = this.getByKey(name)
+		const shutdowns = Object.keys(this.queues).map((key) => {
+			const queue = this.getByKey(key)
 
 			if (typeof queue.boot !== 'undefined') {
 				queue.boot(queue.bull)
 			}
 
 			const workerOptions: WorkerOptions = {
-				concurrency: queue.concurrency,
+				concurrency: queue.concurrency ?? 1,
 				connection: this.Redis as any,
 				...queue.workerOptions,
 			}
@@ -103,7 +97,7 @@ export class BullManager implements BullManagerContract {
 				await queue.handle(job)
 			}
 
-			const worker = new Worker(name, processor, workerOptions)
+			const worker = new Worker(key, processor, workerOptions)
 
 			const shutdown = () => Promise.all([queue.bull.close(), worker.close()])
 
