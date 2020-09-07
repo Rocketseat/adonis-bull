@@ -22,10 +22,6 @@ export default class BullProvider {
     this.container.alias('Rocketseat/Bull', 'Bull')
   }
 
-  public async boot() {}
-
-  public async ready() {}
-
   public async shutdown() {
     await this.container.use<BullManagerContract>('Rocketseat/Bull').shutdown()
   }
