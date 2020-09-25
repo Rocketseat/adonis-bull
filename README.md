@@ -3,52 +3,130 @@
 </h1>
 
 <p align="center">
-  A <a href="https://github.com/OptimalBits/bull/">Bull</a> provider for the Adonis framework. </br>
+  A <a href="https://github.com/taskforcesh/bullmq">Bull</a> provider for <a href="https://adonisjs.com/">AdonisJs</a> </br>
   Adonis Bull provides an easy way to start using Bull. The fastest, most reliable, Redis-based queue for Node.
 </p>
 
-## Install
+<br />
 
-YARN
+> This documentation refers to the next version of Adonis Bull, which adds support to Adonis v5. <br />
+> If you are using Adonis 4.x, [click here](https://github.com/Rocketseat/adonis-bull/tree/master).
 
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Setup](#setup)
+  * [Connections](#connections)
+- [Initialization](#initialization)
+  * [ace command](#ace-command)
+  * [http server](#http-server)
+- [Usage](#usage)
+  * [Creating your job](#creating-your-job)
+  * [Events](#events)
+  * [Processing the jobs](#processing-the-jobs)
+  * [Simple job](#simple-job)
+  * [Scheduled job](#scheduled-job)
+    + [Other ways of using schedule](#other-ways-of-using-schedule)
+    + [Using schedule with a third party lib](#using-schedule-with-a-third-party-lib)
+  * [Advanced jobs](#advanced-jobs)
+  * [Exceptions](#exceptions)
+- [Contributing](#contributing)
+  * [Contribution Guidelines](#contribution-guidelines)
+  * [Code of Conduct](#code-of-conduct)
+- [License](#license)
+
+
+## Getting Started
+
+Let's start by installing the package in our project.
+
+**Yarn**:
+
+```sh
+yarn add @rocketseat/adonis-bull@alpha
 ```
-yarn add @rocketseat/adonis-bull
+
+**NPM**:
+
+```sh
+npm install @rocketseat/adonis-bull@alpha
 ```
 
-NPM
+## Setup
 
+You can configure the project by running the following command:
+
+```sh
+node ace invoke @rocketseat/adonis-bull
 ```
-npm install @rocketseat/adonis-bull
+
+When prompted, you must choose between two start options: `ace command` or `http server`.
+
+_ps: If you don't know what option you should choose. Check the [initialization](#initialization) session._
+
+### Connections
+
+After executing the `invoke` command the `config/bull.ts` file will be created, where you can define the **Redis** connections. A local connection already exists by default.
+
+To add more connections it is important to make sure that it is also defined in the contracts.
+
+An important step is to set the environment variables in your `.env` and validate them in the `env.ts` file.
+
+```js
+BULL_REDIS_HOST: Env.schema.string({ format: 'host' }),
+BULL_REDIS_PORT: Env.schema.number(),
+BULL_REDIS_PASSWORD: Env.schema.string.optional(),
 ```
 
-## Use
+## Initialization
 
-Add the config file at `config/bull.ts`:
+The bull can be started in two different ways and this was defined by you in the [setup](#setup) session.
 
-```ts
+### `ace command`
+
+The bull will be in a separate instance from the HTTP server. To initialize it you can execute the command:
+
+```sh
+node ace bull:listen
+```
+
+You can define a port with the `--port` flag and you can initialize the [bull-board](https://github.com/vcapretz/bull-board) with the `--board` flag.
+
+### `http server`
+
+When selecting this option a startup file will be created at `start/bull.ts`. The bull will be started together with its server and will share the same instance.
+
+The `start/bull.ts` file will look like this:
+
+```js
+import Bull from '@ioc:Rocketseat/Bull'
 import Env from '@ioc:Adonis/Core/Env'
-import { BullConfig } from '@ioc:Rocketseat/Bull'
 
+const PORT = 9999
+const isDevelopment = Env.get('NODE_ENV') === 'development'
 
-const bullConfig: BullConfig = {
-  connection: Env.get('BULL_CONNECTION'),
+Bull.process()
 
-  bull: {
-    host: Env.get('BULL_REDIS_HOST'),
-    port: Env.get('BULL_REDIS_PORT'),
-    password: Env.get('BULL_REDIS_PASSWORD', ''),
-    db: 0,
-    keyPrefix: '',
-  },
+if (isDevelopment) {
+  Bull.ui(PORT)
 }
-
-export default bullConfig
 ```
 
-In the above file you can define redis connections, there you can pass all `Bull` queue configurations described [here](https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queue).
+The bull board will start in the development environment on port `9999`.
 
+## Usage
 
-Create a file with the `jobs` that will be processed at `start/jobs.ts`:
+### Creating your job
+
+Create a new job file by executing the following ace command:
+
+```bash
+node ace make:job userRegisterEmail
+
+# ✔  create    app/Jobs/UserRegisterEmail.ts
+```
+
+This command will generate a file at `app/Jobs` and add the created job at `start/jobs.ts`.
 
 ```ts
 const jobs = ["App/Jobs/UserRegisterEmail"]
@@ -56,60 +134,7 @@ const jobs = ["App/Jobs/UserRegisterEmail"]
 export default jobs
 ```
 
-Or use the magic way, it will declare all jobs for you:
-
-```ts
-import { listDirectoryFiles } from '@adonisjs/ace'
-import Application from '@ioc:Adonis/Core/Application'
-import { join } from 'path'
-
-/*
-|--------------------------------------------------------------------------
-| Exporting an array of jobs
-|--------------------------------------------------------------------------
-|
-| Instead of manually exporting each file from the app/Jobs directory, we
-| use the helper `listDirectoryFiles` to recursively collect and export
-| an array of filenames.
-*/
-const jobs = listDirectoryFiles(
-  join(Application.appRoot, 'app/Jobs'),
-  Application.appRoot
-).map((name) => {
-  return name
-    .replace(/^\.\/app\/Jobs\//, 'App/Jobs/')
-    .replace(/\.(?:t|j)s$/, '')
-})
-
-export default jobs
-```
-
-Create a new preload file by executing the following ace command.
-
-```bash
-node ace make:prldfile bull
-
-# ✔  create    start/bull.ts
-```
-
-```js
-import Bull from '@ioc:Rocketseat/Bull'
-
-Bull.process()
-  // Optionally you can start BullBoard:
-  .ui(9999); // http://localhost:9999
-  // You don't need to specify the port, the default number is 9999
-```
-
-## Creating your job
-
-Create a new job file by executing the following ace command.
-
-```bash
-node ace make:job userRegisterEmail
-
-# ✔  create    app/Jobs/UserRegisterEmail.ts
-```
+This is an example of how to implement a job for sending emails:
 
 ```ts
 import { JobContract } from '@ioc:Rocketseat/Bull'
@@ -136,7 +161,6 @@ export default class UserRegisterEmail implements JobContract {
 You can override the default `configs`.
 
 ```ts
-...
 import { JobsOptions, QueueOptions, WorkerOptions, Job } from 'bullmq'
 
 export default class UserRegisterEmail implements JobContract {
@@ -146,32 +170,29 @@ export default class UserRegisterEmail implements JobContract {
   public queueOptions: QueueOptions = {}
 
   public workerOptions: WorkerOptions = {}
+
+  public concurrency = 1
+
+...
 }
 ```
 
 ### Events
 
-You can config the events related to the `job` to have more control over it
+The package has support for all events triggered by bull.
+
+To define an event you must prefix it with "on" and add the event name (e.g., `onCompleted()`, `onActive()`, `onWaiting()` and etc).
 
 ```ts
-...
-import Ws from 'App/Services/Ws'
-
 export default class UserRegisterEmail implements JobContract {
   ...
-
-  boot(queue) {
-    queue.on('complete', (job, result) => {
-      Ws
-        .getChannel('admin:notifications')
-        .topic('admin:notifications')
-        .broadcast('new:user', result)
-    })
-  }
+  public onCompleted(job, result) {}
+  public onActive(job) {}
+  ...
 }
 ```
 
-## Processing the jobs
+### Processing the jobs
 
 ### Simple job
 
@@ -216,18 +237,18 @@ export default class HolidayOnSaleController {
 }
 ```
 
-This `job` will be sent only on the specific date, wich for example here is on November 15th at noon.
+This `job` will be sent only on the specific date.
 
-When finishing a date, never use past dates because it will cause an error.
+If a date has already passed, an error will occur.
 
-other ways of using `schedule`:
+#### Other ways of using schedule
 
 ```ts
 Bull.schedule(key, data, new Date("2019-11-15 12:00:00"));
 Bull.schedule(key, data, 60 * 1000); // 1 minute from now.
 ```
 
-Or with a third party lib:
+#### Using schedule with a third party lib
 
 ```ts
 import humanInterval from 'human-interval'
@@ -247,29 +268,60 @@ Bull.add(key, data, {
 });
 ```
 
-This `job` will be run at 12:30 PM, only on wednesdays and fridays.
+This `job` will run at 12:30 PM, on Wednesdays and Fridays.
 
 ### Exceptions
 
-To have a bigger control over errors that might occur on the line, the events that fail can be manipulated at the file `app/Exceptions/Handler.ts`:
+To have better control over errors that can occur in jobs, events that fail can be handled by creating an `ExceptionHandler`:
+
+```sh
+node ace bull:exception
+```
+
+A `BullHandler.ts` file will be generated at `App/Exceptions`.
+
+You can change this file to handle job errors as you prefer. Here is an example using **Sentry**:
 
 ```ts
+import BullExceptionHandler from '@ioc:Rocketseat/Bull/BullExceptionHandler'
+import { Job } from '@ioc:Rocketseat/Bull'
+import Env from '@ioc:Adonis/Core/Env'
+import Logger from '@ioc:Adonis/Core/Logger'
 import Sentry from 'App/Services/Sentry'
 
-import Logger from '@ioc:Adonis/Core/Logger'
-import HttpExceptionHandler from '@ioc:Adonis/Core/HttpExceptionHandler'
+const isDevelopment = Env.get('NODE_ENV') === 'development'
 
-export default class ExceptionHandler extends HttpExceptionHandler {
+export default class JobExceptionHandler extends BullExceptionHandler {
   constructor () {
     super(Logger)
   }
 
-  async report(error, job) {
-    Sentry.configureScope(scope => {
-      scope.setExtra(job);
-    });
+  public async handle (error: Error, job: Job) {
+    if (isDevelopment) {
+      this.logger.error(`key=${job.name} id=${job.id} error=${error.message}`)
+    } else {
+      Sentry.configureScope(scope => {
+        scope.setExtra(job);
+      });
 
-    Sentry.captureException(error);
+      Sentry.captureException(error);
+    }
   }
 }
 ```
+
+## Contributing
+
+Thank you for being interested in making this package better. We encourage everyone to help improve this project with new features, bug fixes, or performance improvements. Please take a little bit of your time to read our guide to make this process faster and easier.
+
+### Contribution Guidelines
+
+To understand how to submit an issue, commit and create pull requests, check our [Contribution Guidelines](/.github/CONTRIBUTING.md).
+
+### Code of Conduct
+
+We expect you to follow our [Code of Conduct](/.github/CODE_OF_CONDUCT.md). You can read it to understand what kind of behavior will and will not be tolerated.
+
+## License
+
+MIT License © [Rocketseat](https://github.com/Rocketseat)
