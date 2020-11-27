@@ -9,8 +9,6 @@
 
 ## Install
 
-You need [install Redis Provider](https://preview.adonisjs.com/guides/database/redis/#setup) before installing this package.
-
 YARN
 
 ```
@@ -25,7 +23,30 @@ npm install @rocketseat/adonis-bull
 
 ## Use
 
-First, configure Redis by following this guide: https://preview.adonisjs.com/guides/database/redis/
+Add the config file at `config/bull.ts`:
+
+```ts
+import Env from '@ioc:Adonis/Core/Env'
+import { BullConfig } from '@ioc:Rocketseat/Bull'
+
+
+const bullConfig: BullConfig = {
+  connection: Env.get('BULL_CONNECTION'),
+
+  bull: {
+    host: Env.get('BULL_REDIS_HOST'),
+    port: Env.get('BULL_REDIS_PORT'),
+    password: Env.get('BULL_REDIS_PASSWORD', ''),
+    db: 0,
+    keyPrefix: '',
+  },
+}
+
+export default bullConfig
+```
+
+In the above file you can define redis connections, there you can pass all `Bull` queue configurations described [here](https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queue).
+
 
 Create a file with the `jobs` that will be processed at `start/jobs.ts`:
 
