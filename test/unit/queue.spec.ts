@@ -4,9 +4,6 @@ import test from 'japa'
 import { Ioc } from '@adonisjs/fold'
 import { BullManager } from '../../src/BullManager'
 import { FakeLogger } from '@adonisjs/logger/build/standalone'
-import { RedisManager } from '@adonisjs/redis/build/src/RedisManager'
-import { Emitter } from '@adonisjs/events/build/standalone'
-import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { JobContract } from '@ioc:Rocketseat/Bull'
 
@@ -22,24 +19,15 @@ test.group('Bull', () => {
       async handle () {}
     }))
 
-    const redis = (new RedisManager(
-      ioc,
-      {
-        connection: 'primary',
-        connections: {
-          primary: {
-            host: '127.0.0.1',
-            port: 6379,
-            healthCheck: true
-          }
-        }
-      } as any,
-      new Emitter(ioc)
-    ) as unknown) as RedisManagerContract
+    const config = {
+      host: '127.0.0.1',
+      port: 6379,
+      healthCheck: true
+    }
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, redis, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, config, ['App/Jobs/TestBull'])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -52,7 +40,6 @@ test.group('Bull', () => {
     assert.equal(queue.concurrency, 2)
 
     await bull.shutdown()
-    await redis.quit('primary')
   })
 
   test('should add a new job with events inside Job class', async (assert) => {
@@ -68,31 +55,21 @@ test.group('Bull', () => {
       }
     }))
 
-    const redis = (new RedisManager(
-      ioc,
-      {
-        connection: 'primary',
-        connections: {
-          primary: {
-            host: '127.0.0.1',
-            port: 6379,
-            healthCheck: true
-          }
-        }
-      } as any,
-      new Emitter(ioc)
-    ) as unknown) as RedisManagerContract
+    const config = {
+      host: '127.0.0.1',
+      port: 6379,
+      healthCheck: true
+    }
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, redis, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, config, ['App/Jobs/TestBull'])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
     bull.add(jobDefinition.key, data)
     bull.process()
     await bull.shutdown()
-    await redis.quit('primary')
   })
 
   test('should execute the job handler inside Job class', async (assert) => {
@@ -101,33 +78,22 @@ test.group('Bull', () => {
 
     ioc.singleton('App/Jobs/TestBull', () => {
       return new (class Job implements JobContract {
-        public key = 'TestBull-name'
+        public key = 'TestBull-name';
         public async handle () {
           return expectedResponse
         }
       })()
     })
 
-    const redis = (new RedisManager(
-      ioc,
-      {
-        connection: 'primary',
-        connections: {
-          primary: {
-            host: '127.0.0.1',
-            port: 6379,
-            healthCheck: true
-          }
-        }
-      } as any,
-      new Emitter(ioc)
-    ) as unknown) as RedisManagerContract
-
-    await redis.flushall()
+    const config = {
+      host: '127.0.0.1',
+      port: 6379,
+      healthCheck: true
+    }
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, redis, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, config, ['App/Jobs/TestBull'])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -140,12 +106,14 @@ test.group('Bull', () => {
 
     job = (await queue.bull.getJob(job.id!))!
 
-    assert.deepEqual(ioc.use('App/Jobs/TestBull'), ioc.use('App/Jobs/TestBull'))
+    assert.deepEqual(
+      ioc.use('App/Jobs/TestBull'),
+      ioc.use('App/Jobs/TestBull')
+    )
     assert.deepEqual(job.data, data)
     assert.deepEqual(job.returnvalue, expectedResponse)
 
     await bull.shutdown()
-    await redis.quit('primary')
   })
 
   test('should schedule a new job', async (assert) => {
@@ -155,29 +123,20 @@ test.group('Bull', () => {
       'App/Jobs/TestBull',
       () =>
         new (class Job implements JobContract {
-          public key = 'TestBull-name'
+          public key = 'TestBull-name';
           public async handle () {}
         })()
     )
 
-    const redis = (new RedisManager(
-      ioc,
-      {
-        connection: 'primary',
-        connections: {
-          primary: {
-            host: '127.0.0.1',
-            port: 6379,
-            healthCheck: true
-          }
-        }
-      } as any,
-      new Emitter(ioc)
-    ) as unknown) as RedisManagerContract
+    const config = {
+      host: '127.0.0.1',
+      port: 6379,
+      healthCheck: true
+    }
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, redis, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, config, ['App/Jobs/TestBull'])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -186,7 +145,6 @@ test.group('Bull', () => {
     assert.equal(jobDefinition.key, job.name)
     assert.equal(job.opts.delay, 1000)
     assert.deepEqual(data, job.data)
-    await redis.quit('primary')
   })
 
   test('should not schedule when time is invalid', async (assert) => {
@@ -197,24 +155,15 @@ test.group('Bull', () => {
       async handle () {}
     }))
 
-    const redis = (new RedisManager(
-      ioc,
-      {
-        connection: 'primary',
-        connections: {
-          primary: {
-            host: '127.0.0.1',
-            port: 6379,
-            healthCheck: true
-          }
-        }
-      } as any,
-      new Emitter(ioc)
-    ) as unknown) as RedisManagerContract
+    const config = {
+      host: '127.0.0.1',
+      port: 6379,
+      healthCheck: true
+    }
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, redis, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, config, ['App/Jobs/TestBull'])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -223,6 +172,5 @@ test.group('Bull', () => {
     }, 'Invalid schedule time')
 
     await bull.shutdown()
-    await redis.quit('primary')
   })
 })

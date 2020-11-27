@@ -1,20 +1,31 @@
 import { IocContract } from '@adonisjs/fold'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
-import { BullManagerContract, JobContract, QueueContract } from '@ioc:Rocketseat/Bull'
-import { Queue, JobsOptions, Job as BullJob, Worker, WorkerOptions, Processor } from 'bullmq'
+import {
+  BullManagerContract,
+  JobContract,
+  QueueContract,
+  BullConnectionContract
+} from '@ioc:Rocketseat/Bull'
+import {
+  Queue,
+  JobsOptions,
+  Job as BullJob,
+  Worker,
+  WorkerOptions,
+  Processor
+} from 'bullmq'
 import * as BullBoard from 'bull-board'
-import { RedisManagerContract } from '@ioc:Adonis/Addons/Redis'
 
 export class BullManager implements BullManagerContract {
   constructor (
     protected container: IocContract,
     protected Logger: LoggerContract,
-    protected Redis: RedisManagerContract,
+    protected config: BullConnectionContract,
     protected jobs: string[]
   ) {}
 
-  private _queues: { [key: string]: QueueContract }
-  private _shutdowns: (() => Promise<any>)[] = []
+  private _queues: { [key: string]: QueueContract };
+  private _shutdowns: (() => Promise<any>)[] = [];
 
   public get queues () {
     if (this._queues) {
@@ -26,7 +37,7 @@ export class BullManager implements BullManagerContract {
 
       queues[jobDefinition.key] = Object.freeze({
         bull: new Queue(jobDefinition.key, {
-          connection: this.Redis as any,
+          connection: this.config,
           ...jobDefinition.queueOptions
         }),
         ...jobDefinition,
@@ -44,11 +55,20 @@ export class BullManager implements BullManagerContract {
     return this.queues[key]
   }
 
-  public add<T> (key: string, data: T, jobOptions?: JobsOptions): Promise<BullJob<any, any>> {
+  public add<T> (
+    key: string,
+    data: T,
+    jobOptions?: JobsOptions
+  ): Promise<BullJob<any, any>> {
     return this.getByKey(key).bull.add(key, data, jobOptions)
   }
 
-  public schedule<T = any> (key: string, data: T, date: number | Date, options?: JobsOptions) {
+  public schedule<T = any> (
+    key: string,
+    data: T,
+    date: number | Date,
+    options?: JobsOptions
+  ) {
     const delay = typeof date === 'number' ? date : date.getTime() - Date.now()
 
     if (delay <= 0) {
@@ -64,7 +84,9 @@ export class BullManager implements BullManagerContract {
   }
 
   public ui (port = 9999) {
-    BullBoard.setQueues(Object.keys(this.queues).map((key) => this.getByKey(key).bull))
+    BullBoard.setQueues(
+      Object.keys(this.queues).map((key) => this.getByKey(key).bull)
+    )
 
     const server = BullBoard.router.listen(port, () => {
       this.Logger.info(`bull board on http://localhost:${port}`)
@@ -91,7 +113,7 @@ export class BullManager implements BullManagerContract {
 
       const workerOptions: WorkerOptions = {
         concurrency: jobDefinition.concurrency ?? 1,
-        connection: this.Redis as any,
+        connection: this.config,
         ...jobDefinition.workerOptions
       }
 
@@ -101,7 +123,8 @@ export class BullManager implements BullManagerContract {
 
       const worker = new Worker(key, processor, workerOptions)
 
-      const shutdown = () => Promise.all([jobDefinition.bull.close(), worker.close()])
+      const shutdown = () =>
+        Promise.all([jobDefinition.bull.close(), worker.close()])
 
       return shutdown
     })

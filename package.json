@@ -44,7 +44,6 @@
     "@adonisjs/fold": "^6.4.0",
     "@adonisjs/logger": "^2.1.0",
     "@adonisjs/mrm-preset": "^2.4.0",
-    "@adonisjs/redis": "^4.1.2",
     "@types/node": "^14.6.1",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",
@@ -67,8 +66,7 @@
     "url": "git+https://github.com/rocketseat/adonis-bull.git"
   },
   "peerDependencies": {
-    "@adonisjs/core": ">=5.0.0-preview",
-    "@adonisjs/redis": ">=4.0.0"
+    "@adonisjs/core": ">=5.0.0-preview"
   },
   "dependencies": {
     "bull-board": "^1.0.0-alpha.10",
