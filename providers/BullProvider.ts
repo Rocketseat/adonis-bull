@@ -8,6 +8,11 @@ export default class BullProvider {
   constructor (protected container: IocContract) {}
 
   public register () {
+    this.container.bind('Rocketseat/Bull/BullExceptionHandler', () => {
+      const { BullExceptionHandler } = require('../src/BullExceptionHandler')
+      return BullExceptionHandler
+    })
+
     this.container.singleton('Rocketseat/Bull', () => {
       const app = this.container.use('Adonis/Core/Application')
       const config = this.container.use('Adonis/Core/Config').get('bull', {})

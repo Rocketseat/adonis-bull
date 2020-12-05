@@ -118,7 +118,12 @@ export class BullManager implements BullManagerContract {
       }
 
       const processor: Processor = async (job) => {
-        return jobDefinition.handle(job)
+        try {
+          return await jobDefinition.handle(job)
+        } catch (error) {
+          this.handleException(error, job)
+          return Promise.reject(error)
+        }
       }
 
       const worker = new Worker(key, processor, workerOptions)
@@ -132,6 +137,16 @@ export class BullManager implements BullManagerContract {
     this._shutdowns = [...this._shutdowns, ...shutdowns]
 
     return this
+  }
+
+  private handleException (error, job) {
+    try {
+      const queueHandler = this.container.use('App/Exceptions/Handler')
+
+      queueHandler.report(error, job)
+    } catch (err) {
+      this.Logger.error(`name=${job.queue.name} id=${job.id}`)
+    }
   }
 
   public async shutdown () {
