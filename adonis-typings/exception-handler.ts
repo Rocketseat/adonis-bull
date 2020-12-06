@@ -9,7 +9,6 @@ declare module '@ioc:Rocketseat/Bull/BullExceptionHandler' {
   export default abstract class BullExceptionHandler {
     constructor(logger: LoggerContract);
     protected logger: LoggerContract;
-    public report(error: any, ctx: Job): void;
     public handle(error: any, ctx: Job): Promise<any>;
   }
 }

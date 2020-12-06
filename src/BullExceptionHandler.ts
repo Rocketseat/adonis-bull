@@ -9,23 +9,10 @@ import { Job } from 'bullmq'
 export abstract class BullExceptionHandler {
   constructor (protected logger: LoggerContract) {}
 
-  /**
-   * Report a given error
-   */
-  public report (error: any, job: Job) {
-    if (typeof error.report === 'function') {
-      error.report(error, job)
-      return
-    }
-    this.logger.error(error.message)
-  }
-
-  /**
-   * Handle exception and make response
-   */
   public async handle (error: any, job: Job) {
     if (typeof error.handle === 'function') {
       return error.handle(error, job)
     }
+    this.logger.error(error.message)
   }
 }

@@ -121,7 +121,7 @@ export class BullManager implements BullManagerContract {
         try {
           return await jobDefinition.handle(job)
         } catch (error) {
-          this.handleException(error, job)
+          await this.handleException(error, job)
           return Promise.reject(error)
         }
       }
@@ -139,11 +139,17 @@ export class BullManager implements BullManagerContract {
     return this
   }
 
-  private handleException (error, job) {
+  private async handleException (error, job) {
     try {
-      const queueHandler = this.container.use('App/Exceptions/Handler')
+      const resolver = this.container.getResolver(
+        undefined,
+        'exceptions',
+        'App/Exceptions'
+      )
 
-      queueHandler.report(error, job)
+      const resolvedPayload = resolver.resolve('BullHandler.handle')
+
+      await resolver.call(resolvedPayload, undefined, [error, job])
     } catch (err) {
       this.Logger.error(`name=${job.queue.name} id=${job.id}`)
     }
