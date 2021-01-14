@@ -12,11 +12,11 @@
 `adonis install @rocketseat/adonis-bull`
 
 ## Use
+
 Register the Bull commands at `start/app.js`
+
 ```js
-const aceProviders = [
-  '@rocketseat/adonis-bull/providers/Command',
-];
+const aceProviders = ["@rocketseat/adonis-bull/providers/Command"];
 ```
 
 Register the Bull provider at `start/app.js`
@@ -24,7 +24,7 @@ Register the Bull provider at `start/app.js`
 ```js
 const providers = [
   //...
-  "@rocketseat/adonis-bull/providers/Bull"
+  "@rocketseat/adonis-bull/providers/Bull",
 ];
 ```
 
@@ -50,10 +50,10 @@ module.exports = {
       port: 6379,
       password: null,
       db: 0,
-      keyPrefix: ""
-    }
+      keyPrefix: "",
+    },
   },
-  remote: "redis://redis.example.com?password=correcthorsebatterystaple"
+  remote: "redis://redis.example.com?password=correcthorsebatterystaple",
 };
 ```
 
@@ -100,7 +100,7 @@ class UserRegisterEmail {
   async handle(job) {
     const { data } = job; // the 'data' variable has user data
 
-    await Mail.send("emails.welcome", data, message => {
+    await Mail.send("emails.welcome", data, (message) => {
       message
         .to(data.email)
         .from("<from-email>")
@@ -144,6 +144,22 @@ class UserRegisterEmail {
 }
 
 module.exports = UserRegisterEmail;
+```
+
+The package has support for all events triggered in the bull, just add "on" and complete with the name of the event
+Ex: `onCompleted()`, `onActive()`, `onWaiting()` and etc.
+
+```js
+class UserRegisterEmail {
+  ...
+
+  onCompleted(job, result) {}
+  onActive(job) {}
+  ...
+}
+
+module.exports = UserRegisterEmail;
+
 ```
 
 ## Processing the jobs
@@ -213,8 +229,8 @@ You can use the own `Bull` configs to improve your job:
 ```js
 Bull.add(key, data, {
   repeat: {
-    cron: "0 30 12 * * WED,FRI"
-  }
+    cron: "0 30 12 * * WED,FRI",
+  },
 });
 ```
 
@@ -229,7 +245,7 @@ const Sentry = use("Sentry");
 
 class QueueHandler {
   async report(error, job) {
-    Sentry.configureScope(scope => {
+    Sentry.configureScope((scope) => {
       scope.setExtra(job);
     });
 
