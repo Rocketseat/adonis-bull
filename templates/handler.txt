@@ -1,0 +1,23 @@
+/*
+|--------------------------------------------------------------------------
+| Bull Exception Handler
+|--------------------------------------------------------------------------
+|
+| AdonisJs will forward all exceptions occurred during an BULL job execution to
+| the following class. You can learn more about exception handling by
+| reading docs.
+|
+| The exception handler extends a base `BullExceptionHandler` which is not
+| mandatory, however it can do lot of heavy lifting to handle the errors
+| properly.
+|
+*/
+
+import Logger from '@ioc:Adonis/Core/Logger'
+import BullExceptionHandler from '@ioc:Rocketseat/Bull/BullExceptionHandler'
+
+export default class BullHandler extends BullExceptionHandler {
+  constructor() {
+    super(Logger)
+  }
+}
