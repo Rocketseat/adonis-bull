@@ -84,6 +84,7 @@ const jobs = listDirectoryFiles(
 export default jobs
 ```
 
+
 Create a new preload file by executing the following ace command.
 
 ```bash
@@ -92,7 +93,7 @@ node ace make:prldfile bull
 # ✔  create    start/bull.ts
 ```
 
-```js
+```ts
 import Bull from '@ioc:Rocketseat/Bull'
 
 Bull.process()
