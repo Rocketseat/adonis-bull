@@ -5,11 +5,22 @@ import { Ioc } from '@adonisjs/fold'
 import { BullManager } from '../../src/BullManager'
 import { FakeLogger } from '@adonisjs/logger/build/standalone'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
-import { JobContract } from '@ioc:Rocketseat/Bull'
+import { JobContract, BullConfig } from '@ioc:Rocketseat/Bull'
 import { BullExceptionHandler } from '../../src/BullExceptionHandler'
 import { Job } from 'bullmq'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const CONNECTION_CONFIG = {
+  connection: 'local',
+  connections: {
+    local: {
+      host: '127.0.0.1',
+      port: 6739,
+      password: 'docker'
+    }
+  }
+} as unknown as BullConfig
 
 test.group('Bull', () => {
   test('should add a new job', async (assert) => {
@@ -21,15 +32,9 @@ test.group('Bull', () => {
       async handle () {}
     }))
 
-    const config = {
-      host: '127.0.0.1',
-      port: 6379,
-      healthCheck: true
-    }
-
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, config, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -57,15 +62,9 @@ test.group('Bull', () => {
       }
     }))
 
-    const config = {
-      host: '127.0.0.1',
-      port: 6379,
-      healthCheck: true
-    }
-
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, config, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -87,15 +86,9 @@ test.group('Bull', () => {
       })()
     })
 
-    const config = {
-      host: '127.0.0.1',
-      port: 6379,
-      healthCheck: true
-    }
-
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, config, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -130,12 +123,6 @@ test.group('Bull', () => {
       })()
     })
 
-    const config = {
-      host: '127.0.0.1',
-      port: 6379,
-      healthCheck: true
-    }
-
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
     class FakeExceptionHandler extends BullExceptionHandler {
@@ -151,7 +138,7 @@ test.group('Bull', () => {
 
     ioc.bind('App/Exceptions/BullHandler', () => new FakeExceptionHandler())
 
-    const bull = new BullManager(ioc, logger, config, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -188,15 +175,9 @@ test.group('Bull', () => {
         })()
     )
 
-    const config = {
-      host: '127.0.0.1',
-      port: 6379,
-      healthCheck: true
-    }
-
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, config, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -215,15 +196,9 @@ test.group('Bull', () => {
       async handle () {}
     }))
 
-    const config = {
-      host: '127.0.0.1',
-      port: 6379,
-      healthCheck: true
-    }
-
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, config, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
