@@ -8,6 +8,7 @@ import {
 } from '@ioc:Rocketseat/Bull'
 import {
   Queue,
+  QueueScheduler,
   JobsOptions,
   Job as BullJob,
   Worker,
@@ -34,12 +35,16 @@ export class BullManager implements BullManagerContract {
 
     this._queues = this.jobs.reduce((queues, path) => {
       const jobDefinition: JobContract = this.container.make(path)
+      const queueConfig = {
+        connection: this.config.connections[this.config.connection],
+        ...jobDefinition.queueOptions
+      }
+
+      // eslint-disable-next-line no-new
+      new QueueScheduler(jobDefinition.key, queueConfig)
 
       queues[jobDefinition.key] = Object.freeze({
-        bull: new Queue(jobDefinition.key, {
-          connection: this.config.connections[this.config.connection],
-          ...jobDefinition.queueOptions
-        }),
+        bull: new Queue(jobDefinition.key, queueConfig),
         ...jobDefinition,
         handle: jobDefinition.handle,
         boot: jobDefinition.boot
