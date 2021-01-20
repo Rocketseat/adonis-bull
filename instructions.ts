@@ -11,6 +11,32 @@ export default async function instructions (
   app: ApplicationContract,
   sink: typeof sinkStatic
 ) {
+  const startMethod = await sink
+    .getPrompt()
+    .choice('How do you want to start your queue?',
+      [
+        { name: 'command', message: 'Ace command', hint: 'Started by bull:listen command' }, { name: 'http', message: 'HTTP Server', hint: 'Started with the adonis server' }], {
+        validate (choice) {
+          return choice && choice.length ? true : 'Select a queue process start method'
+        }
+      })
+
+  if (startMethod === 'http') {
+    const preloadFilePath = app.makePath('start/bull.ts')
+    const bullPreloadFile = new sink.files.MustacheFile(projectRoot, preloadFilePath, getStub('bull.txt'))
+
+    bullPreloadFile.overwrite = true
+
+    bullPreloadFile.commit()
+    sink.logger.action('create').succeeded('start/bull.ts')
+
+    const preload = new sink.files.AdonisRcFile(projectRoot)
+    preload.setPreload('./start/bull')
+    preload.commit()
+
+    sink.logger.action('update').succeeded('.adonisrc.json')
+  }
+
   const configPath = app.configPath('bull.ts')
   const bullConfig = new sink.files.MustacheFile(projectRoot, configPath, getStub('config.txt'))
 
