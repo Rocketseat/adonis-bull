@@ -40,10 +40,12 @@
   "devDependencies": {
     "@adonisjs/ace": "^6.9.3",
     "@adonisjs/application": "^2.0.0",
-    "@adonisjs/core": "^5.0.0-preview-rc-1.12",
+    "@adonisjs/core": "^5.0.4-preview-rc-2.1",
     "@adonisjs/fold": "^6.4.0",
     "@adonisjs/logger": "^2.1.0",
     "@adonisjs/mrm-preset": "^2.4.0",
+    "@adonisjs/sink": "^1.0.17",
+    "@poppinss/dev-utils": "^1.0.11",
     "@types/node": "^14.6.1",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",
@@ -66,10 +68,10 @@
     "url": "git+https://github.com/rocketseat/adonis-bull.git"
   },
   "peerDependencies": {
-    "@adonisjs/core": ">=5.0.0-preview"
+    "@adonisjs/core": "^5.0.4-preview-rc"
   },
   "dependencies": {
-    "bull-board": "^1.0.0-alpha.10",
+    "bull-board": "^1.2.0",
     "bullmq": "^1.9.0"
   },
   "files": [
@@ -77,10 +79,13 @@
     "build/commands",
     "build/providers",
     "build/src",
-    "build/templates"
+    "build/templates",
+    "build/instructions.js",
+    "build/instructions.d.ts"
   ],
   "types": "build/adonis-typings/index.d.ts",
   "adonisjs": {
+    "instructions": "./build/instructions.js",
     "types": "@rocketseat/adonis-bull",
     "providers": [
       "@rocketseat/adonis-bull"
