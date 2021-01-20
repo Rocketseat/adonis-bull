@@ -53,13 +53,20 @@ declare module '@ioc:Rocketseat/Bull' {
       jobOptions?: JobsOptions
     ): Promise<Job<any, any>>;
 
+    schedule<T>(
+      name: string,
+      data: T,
+      date: number | Date,
+      jobOptions?: JobsOptions
+    ): Promise<Job<any, any>>;
+
     remove(name: string, jobId: string): Promise<void>;
 
     ui(port?: number): void;
 
     shutdown(): Promise<void>;
 
-    process(): void;
+    process(): BullManagerContract;
   }
 
   const Bull: BullManagerContract
