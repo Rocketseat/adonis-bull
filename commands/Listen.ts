@@ -1,12 +1,11 @@
-import { BaseCommand, Kernel, flags } from '@adonisjs/ace'
-import { ApplicationContract } from '@ioc:Adonis/Core/Application'
-import { BullManagerContract } from '@ioc:Rocketseat/Bull'
+import { BaseCommand, flags } from '@adonisjs/core/build/standalone'
 
 export default class Listen extends BaseCommand {
   public static commandName = 'bull:listen'
   public static description = 'Start the Bull listener'
-  constructor (app: ApplicationContract, kernel: Kernel, private bull: BullManagerContract) {
-    super(app, kernel)
+  public static settings = {
+    loadApp: true,
+    stayAlive: true
   }
 
   /**
@@ -19,16 +18,20 @@ export default class Listen extends BaseCommand {
    * Custom port for the bull-board
    */
   @flags.number({ description: "Run bull's dashboard in the provided port", alias: 'p' })
-  public port?: number
+  public port: number
 
   /**
    * Execute command
    */
-  public async handle (): Promise<void> {
-    this.bull.process()
+  public async run (): Promise<void> {
+    const bull = this.application.container.use('Rocketseat/Bull')
+
+    console.log({ board: this.board })
+
+    bull.process()
 
     if (this.board || (typeof this.board === 'undefined' && typeof this.port !== 'undefined')) {
-      this.bull.ui(this.port)
+      bull.ui(this.port)
     }
   }
 }
