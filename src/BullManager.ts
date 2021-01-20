@@ -4,7 +4,7 @@ import {
   BullManagerContract,
   JobContract,
   QueueContract,
-  BullConnectionContract
+  BullConfig
 } from '@ioc:Rocketseat/Bull'
 import {
   Queue,
@@ -20,7 +20,7 @@ export class BullManager implements BullManagerContract {
   constructor (
     protected container: IocContract,
     protected Logger: LoggerContract,
-    protected config: BullConnectionContract,
+    protected config: BullConfig,
     protected jobs: string[]
   ) {}
 
@@ -37,7 +37,7 @@ export class BullManager implements BullManagerContract {
 
       queues[jobDefinition.key] = Object.freeze({
         bull: new Queue(jobDefinition.key, {
-          connection: this.config,
+          connection: this.config.connections[this.config.connection],
           ...jobDefinition.queueOptions
         }),
         ...jobDefinition,
@@ -85,7 +85,7 @@ export class BullManager implements BullManagerContract {
 
   public ui (port = 9999) {
     BullBoard.setQueues(
-      Object.keys(this.queues).map((key) => this.getByKey(key).bull)
+      Object.keys(this.queues).map((key) => new BullBoard.BullMQAdapter(this.getByKey(key).bull))
     )
 
     const server = BullBoard.router.listen(port, () => {
@@ -113,7 +113,7 @@ export class BullManager implements BullManagerContract {
 
       const workerOptions: WorkerOptions = {
         concurrency: jobDefinition.concurrency ?? 1,
-        connection: this.config,
+        connection: this.config.connections[this.config.connection],
         ...jobDefinition.workerOptions
       }
 
