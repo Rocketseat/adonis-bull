@@ -1,4 +1,4 @@
-name: Node.js 
+name: Node.js
 
 on: [push, pull_request]
 env:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: [8.x, 10.x, 12.x]
+        node-version: [10.x, 12.x]
 
     steps:
       - name: Clone repository
@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-            
+
       - name: Setup Redis
         uses: zhulik/redis-action@1.1.0
         with:
