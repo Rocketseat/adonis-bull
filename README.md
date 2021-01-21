@@ -31,7 +31,6 @@
 <br /><br />
 
 ## Install
-#
 Let's start by installing the package in our project.
 
 #### YARN
@@ -49,7 +48,6 @@ npm install @rocketseat/adonis-bull@alpha
 <br /><br />
 
 ## Setup
-#
 
 Okay, now we need to configure the project. But don't worry, we will do this for you with a command.
 
@@ -79,8 +77,6 @@ BULL_REDIS_PASSWORD: Env.schema.string.optional(),
 <br /><br />
 
 ## Initialization
-#
-
 
 The bull can be started in two different ways and this was defined by you in the [setup](#setup) session
 
@@ -119,7 +115,6 @@ The bull board will only be started in the development environment and by defaul
 <br /> <br />
 
 ## Usage
-#
 
 ### Creating your job
 
@@ -131,7 +126,8 @@ node ace make:job userRegisterEmail
 # ✔  create    app/Jobs/UserRegisterEmail.ts
 ```
 
-This command will create a file with the `jobs` that will be processed at `start/jobs.ts` e adicionará o job criado:
+This command will create a file with the `jobs` that will be processed at `start/jobs.ts` 
+and add the job created.
 
 ```ts
 const jobs = ["App/Jobs/UserRegisterEmail"]
@@ -139,8 +135,8 @@ const jobs = ["App/Jobs/UserRegisterEmail"]
 export default jobs
 ```
 
-O seu job será gerado dentro de `app/Jobs`. <br />
-_Exemplo da implementação de um job para envio de e-mails._ 
+Your job will be generated within `app/Jobs`. <br />
+_Example of implementing a job for sending emails._ 
 
 ```ts
 import { JobContract } from '@ioc:Rocketseat/Bull'
@@ -167,7 +163,6 @@ export default class UserRegisterEmail implements JobContract {
 You can override the default `configs`.
 
 ```ts
-...
 import { JobsOptions, QueueOptions, WorkerOptions, Job } from 'bullmq'
 
 export default class UserRegisterEmail implements JobContract {
@@ -177,6 +172,11 @@ export default class UserRegisterEmail implements JobContract {
   public queueOptions: QueueOptions = {}
 
   public workerOptions: WorkerOptions = {}
+
+  public concurrency = 1
+
+  public connection = 'local'
+  ...
 }
 ```
 
@@ -185,23 +185,14 @@ export default class UserRegisterEmail implements JobContract {
 ### Events
 #
 
-You can config the events related to the `job` to have more control over it
+The package has support for all events triggered in the bull, just add "on" and complete with the name of the event (e.g., `onCompleted()`, `onActive()`, `onWaiting()` and etc).
 
 ```ts
-...
-import Ws from 'App/Services/Ws'
-
 export default class UserRegisterEmail implements JobContract {
   ...
-
-  boot(queue) {
-    queue.on('complete', (job, result) => {
-      Ws
-        .getChannel('admin:notifications')
-        .topic('admin:notifications')
-        .broadcast('new:user', result)
-    })
-  }
+  public onCompleted(job, result) {}
+  public onActive(job) {}
+  ...
 }
 ```
 
@@ -295,20 +286,14 @@ This `job` will be run at 12:30 PM, only on wednesdays and fridays.
 ### Exceptions
 #
 
-To have a bigger control over errors that might occur on the line, the events that fail can be manipulated at the file `app/Exceptions/Handler.ts`:
+To have better control over errors that can occur in jobs, events that fail can be handled by creating an ExceptionHandler:
 
 ```ts
 import Sentry from 'App/Services/Sentry'
+import BullExceptionHandler from '@ioc:Rocketseat/Bull/BullExceptionHandler'
 
-import Logger from '@ioc:Adonis/Core/Logger'
-import HttpExceptionHandler from '@ioc:Adonis/Core/HttpExceptionHandler'
-
-export default class ExceptionHandler extends HttpExceptionHandler {
-  constructor () {
-    super(Logger)
-  }
-
-  async report(error, job) {
+export default class JobExceptionHandler extends BullExceptionHandler {
+  async handle(error: Error, job: Job) {
     Sentry.configureScope(scope => {
       scope.setExtra(job);
     });
