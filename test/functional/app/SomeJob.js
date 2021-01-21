@@ -1,9 +1,9 @@
 class SomeJob {
-  static get key () {
+  static get key() {
     return 'SomeJob-key'
   }
 
-  async handle () {
+  async handle() {
     return 'good luck'
   }
 }
