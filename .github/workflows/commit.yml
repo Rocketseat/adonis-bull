@@ -1,0 +1,24 @@
+name: Lint Commit Messages
+
+on: [pull_request]
+
+jobs:
+  commit:
+    name: Lint commit messages
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Check commit message
+        uses: wagoid/commitlint-github-action@v1
+        env:
+          NODE_PATH: ${{ github.workspace }}/node_modules
