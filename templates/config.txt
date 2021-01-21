@@ -20,11 +20,9 @@ const bullConfig: BullConfig = {
 
   connections: {
     local: {
-      host: Env.get('REDIS_HOST', 'localhost'),
-      port: Env.get('REDIS_PORT', '6379'),
-      password: Env.get('REDIS_PASSWORD', ''),
-      db: 0,
-      keyPrefix: '',
+      host: Env.get('BULL_REDIS_HOST', 'localhost'),
+      port: Env.get('BULL_REDIS_PORT'),
+      password: Env.get('BULL_REDIS_PASSWORD'),
     },
   },
 }
