@@ -157,7 +157,6 @@ export class BullManager implements BullManagerContract {
       const worker = new Worker(key, processor, workerOptions)
 
       jobDefinition.listeners.forEach(function (item) {
-        console.log('vai fazer os xesques')
         worker.on(item.eventName, jobDefinition.instance[item.method].bind(jobDefinition.instance))
       })
 
