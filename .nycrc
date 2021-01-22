@@ -1,0 +1,12 @@
+{
+  "all": true,
+  "include": [
+    "providers/**/*.ts",
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/BullExceptionHandler.ts",
+    "**/*.spec.js",
+    "**/*.spec.ts"
+  ]
+}
