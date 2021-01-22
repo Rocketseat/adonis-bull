@@ -3,27 +3,27 @@
 const { Command } = require('@adonisjs/ace')
 
 class Listen extends Command {
-  static get inject () {
+  static get inject() {
     return ['Rocketseat/Bull']
   }
 
-  constructor (Bull) {
+  constructor(Bull) {
     super()
     this.Bull = Bull
   }
 
-  static get signature () {
+  static get signature() {
     return `
       bull:listen
       { --board?=@value: Run bull's dashboard }
     `
   }
 
-  static get description () {
+  static get description() {
     return 'Start the Bull listener'
   }
 
-  async handle (args, { board }) {
+  async handle(args, { board }) {
     this.Bull.process()
     if (board) {
       const port = typeof board === 'boolean' ? 9999 : Number(board)
