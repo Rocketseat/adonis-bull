@@ -285,19 +285,39 @@ This `job` will be run at 12:30 PM, only on wednesdays and fridays.
 ### Exceptions
 #
 
-To have better control over errors that can occur in jobs, events that fail can be handled by creating an ExceptionHandler:
+To have better control over errors that can occur in jobs, events that fail can be handled by creating an ExceptionHandler with the command:
+
+```ssh
+node ace bull:exception
+```
+
+A `BullHandler.ts` file will be generated in `App/Exceptions` folder. <br />
+You can change this file to handle job errors as you prefer. Here is an example using **Sentry**:
 
 ```ts
-import Sentry from 'App/Services/Sentry'
 import BullExceptionHandler from '@ioc:Rocketseat/Bull/BullExceptionHandler'
+import { Job } from '@ioc:Rocketseat/Bull'
+import Env from '@ioc:Adonis/Core/Env'
+import Logger from '@ioc:Adonis/Core/Logger'
+import Sentry from 'App/Services/Sentry'
+
+const isDevelopment = Env.get('NODE_ENV') === 'development'
 
 export default class JobExceptionHandler extends BullExceptionHandler {
-  async handle(error: Error, job: Job) {
-    Sentry.configureScope(scope => {
-      scope.setExtra(job);
-    });
+  constructor () {
+    super(Logger)
+  }
 
-    Sentry.captureException(error);
+  public async handle (error: Error, job: Job) {
+    if (isDevelopment) {
+      this.logger.error(`key=${job.name} id=${job.id} error=${error.message}`)
+    } else {
+      Sentry.configureScope(scope => {
+        scope.setExtra(job);
+      });
+  
+      Sentry.captureException(error);
+    }
   }
 }
 ```
