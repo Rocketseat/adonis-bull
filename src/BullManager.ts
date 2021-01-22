@@ -183,7 +183,7 @@ export class BullManager implements BullManagerContract {
 
       await resolver.call(resolvedPayload, undefined, [error, job])
     } catch (err) {
-      this.Logger.error(`name=${job.queue.name} id=${job.id}`)
+      this.Logger.error(`name=${job.name} id=${job.id}`)
     }
   }
 
