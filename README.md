@@ -175,8 +175,7 @@ export default class UserRegisterEmail implements JobContract {
 
   public concurrency = 1
 
-  public connection = 'local'
-  ...
+...
 }
 ```
 
