@@ -2,7 +2,7 @@ const { ServiceProvider, resolver } = require('@adonisjs/fold')
 const path = require('path')
 
 class BullProvider extends ServiceProvider {
-  register () {
+  register() {
     this.app.singleton('Rocketseat/Bull', (app) => {
       const Queue = require('../src/Queue')
       const Helpers = app.use('Adonis/Src/Helpers')

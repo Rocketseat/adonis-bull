@@ -9,7 +9,7 @@ const parseISO = require('date-fns/parseISO')
 const fs = require('fs')
 
 class Queue {
-  constructor (Logger, Config, jobs, app, resolver) {
+  constructor(Logger, Config, jobs, app, resolver) {
     this.Logger = Logger
     this.jobs = jobs
 
@@ -24,10 +24,10 @@ class Queue {
     this.connections = connections
   }
 
-  _getJobListeners (Job) {
+  _getJobListeners(Job) {
     const jobListeners = Object.getOwnPropertyNames(Job.prototype)
-      .filter(method => method.startsWith('on'))
-      .map(method => {
+      .filter((method) => method.startsWith('on'))
+      .map((method) => {
         const eventName = method
           .replace(/^on(\w)/, (match, group) => group.toLowerCase())
           .replace(/([A-Z]+)/, (match, group) => ` ${group.toLowerCase()}`)
@@ -37,7 +37,7 @@ class Queue {
     return jobListeners
   }
 
-  get queues () {
+  get queues() {
     if (!this._queues) {
       this._queues = this.jobs.reduce((queues, path) => {
         const Job = this.app.use(path)
@@ -53,7 +53,7 @@ class Queue {
           name: Job.key,
           handle: Job.handle,
           concurrency: Job.concurrency || 1,
-          options: Job.options
+          options: Job.options,
         }
 
         return queues
@@ -63,11 +63,11 @@ class Queue {
     return this._queues
   }
 
-  get (name) {
+  get(name) {
     return this.queues[name]
   }
 
-  add (name, data, options) {
+  add(name, data, options) {
     const queue = this.get(name)
 
     const job = queue.bull.add(data, { ...queue.options, ...options })
@@ -75,7 +75,7 @@ class Queue {
     return job
   }
 
-  schedule (name, data, date, options) {
+  schedule(name, data, date, options) {
     let delay
 
     if (typeof date === 'number' || date instanceof Number) {
@@ -100,8 +100,8 @@ class Queue {
     }
   }
 
-  ui (port = 9999) {
-    BullBoard.setQueues(Object.values(this.queues).map(queue => queue.bull))
+  ui(port = 9999) {
+    BullBoard.setQueues(Object.values(this.queues).map((queue) => queue.bull))
 
     const { UI } = BullBoard
 
@@ -120,19 +120,23 @@ class Queue {
     process.on('SIGINT', shutdown)
   }
 
-  async remove (name, jobId) {
+  async remove(name, jobId) {
     const job = await this.queues[name].bull.getJob(jobId)
 
     job.remove()
   }
 
   /* eslint handle-callback-err: "error" */
-  handleException (error, job) {
+  handleException(error, job) {
     try {
-      const exceptionHandlerFile = this.resolver.forDir('exceptions').getPath('QueueHandler.js')
+      const exceptionHandlerFile = this.resolver
+        .forDir('exceptions')
+        .getPath('QueueHandler.js')
       fs.accessSync(exceptionHandlerFile, fs.constants.R_OK)
 
-      const namespace = this.resolver.forDir('exceptions').translate('QueueHandler')
+      const namespace = this.resolver
+        .forDir('exceptions')
+        .translate('QueueHandler')
       const handler = this.app.make(this.app.use(namespace))
       handler.report(error, job)
     } catch (err) {
@@ -140,9 +144,9 @@ class Queue {
     }
   }
 
-  process () {
+  process() {
     this.Logger.info('Queue processing started')
-    Object.values(this.queues).forEach(queue => {
+    Object.values(this.queues).forEach((queue) => {
       const Job = new queue.Job()
 
       const jobListeners = this._getJobListeners(queue.Job)
@@ -152,17 +156,19 @@ class Queue {
       })
 
       queue.bull.process(queue.concurrency, (job, done) => {
-        Job.handle(job).then(result => {
-          done(null, result)
-        }).catch(error => {
-          this.handleException(error, job)
-          done(error)
-        })
+        Job.handle(job)
+          .then((result) => {
+            done(null, result)
+          })
+          .catch((error) => {
+            this.handleException(error, job)
+            done(error)
+          })
       })
     })
 
     const shutdown = () => {
-      const promises = Object.values(this.queues).map(queue => {
+      const promises = Object.values(this.queues).map((queue) => {
         return queue.bull.close()
       })
 

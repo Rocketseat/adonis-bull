@@ -1,3 +1,1 @@
-module.exports = [
-  'App/SomeJob'
-]
+module.exports = ['App/SomeJob']
