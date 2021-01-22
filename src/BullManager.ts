@@ -1,11 +1,14 @@
 import { IocContract } from '@adonisjs/fold'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
+
 import {
   BullManagerContract,
   JobContract,
   QueueContract,
-  BullConfig
+  BullConfig,
+  EventListener
 } from '@ioc:Rocketseat/Bull'
+
 import {
   Queue,
   QueueScheduler,
@@ -35,10 +38,13 @@ export class BullManager implements BullManagerContract {
 
     this._queues = this.jobs.reduce((queues, path) => {
       const jobDefinition: JobContract = this.container.make(path)
+
       const queueConfig = {
         connection: this.config.connections[this.config.connection],
         ...jobDefinition.queueOptions
       }
+
+      const jobListeners = this._getEventListener(jobDefinition)
 
       // eslint-disable-next-line no-new
       new QueueScheduler(jobDefinition.key, queueConfig)
@@ -46,6 +52,8 @@ export class BullManager implements BullManagerContract {
       queues[jobDefinition.key] = Object.freeze({
         bull: new Queue(jobDefinition.key, queueConfig),
         ...jobDefinition,
+        instance: jobDefinition,
+        listeners: jobListeners,
         handle: jobDefinition.handle,
         boot: jobDefinition.boot
       })
@@ -54,6 +62,20 @@ export class BullManager implements BullManagerContract {
     }, {})
 
     return this.queues
+  }
+
+  private _getEventListener (job: JobContract): EventListener[] {
+    const jobListeners = Object.getOwnPropertyNames(Object.getPrototypeOf(job)).reduce((events, method: string) => {
+      if (method.startsWith('on')) {
+        const eventName = method.replace(/^on(\w)/, (_, group) => group.toLowerCase()).replace(/([A-Z]+)/, (_, group) => ` ${group.toLowerCase()}`)
+
+        events.push({ eventName, method })
+      }
+
+      return events
+    }, [] as EventListener[])
+
+    return jobListeners
   }
 
   public getByKey (key: string): QueueContract {
@@ -88,6 +110,7 @@ export class BullManager implements BullManagerContract {
     return job?.remove()
   }
 
+  /* istanbul ignore next */
   public ui (port = 9999) {
     BullBoard.setQueues(
       Object.keys(this.queues).map((key) => new BullBoard.BullMQAdapter(this.getByKey(key).bull))
@@ -132,6 +155,11 @@ export class BullManager implements BullManagerContract {
       }
 
       const worker = new Worker(key, processor, workerOptions)
+
+      jobDefinition.listeners.forEach(function (item) {
+        console.log('vai fazer os xesques')
+        worker.on(item.eventName, jobDefinition.instance[item.method].bind(jobDefinition.instance))
+      })
 
       const shutdown = () =>
         Promise.all([jobDefinition.bull.close(), worker.close()])
