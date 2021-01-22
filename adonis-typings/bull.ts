@@ -36,10 +36,22 @@ declare module '@ioc:Rocketseat/Bull' {
     concurrency?: number;
     handle: Processor;
     boot?: (queue: Queue<T>) => void;
+    onCompleted?: (...args: any[]) => void
+    onProgress?: (...args: any[]) => void
+    onFailed?: (...args: any[]) => void
+    onWaiting?: (...args: any[]) => void
+    onDelayed?: (...args: any[]) => void
+    onStalled?: (...args: any[]) => void
+    onRemoved?: (...args: any[]) => void
+    onDrained?: (...args: any[]) => void
   }
+
+  export interface EventListener { eventName: string; method: string }
 
   export interface QueueContract<T = any> extends JobContract<T> {
     bull: Queue<T>;
+    listeners: EventListener[];
+    instance: JobContract<T>;
   }
 
   export interface BullManagerContract {
