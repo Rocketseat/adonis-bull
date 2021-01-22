@@ -2,9 +2,21 @@ import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
 import { Application } from '@adonisjs/core/build/standalone'
 
-export const fs = new Filesystem(join(__dirname, '__app'))
+import { FakeLogger } from '@adonisjs/logger/build/standalone'
 
-export async function setupApplication (additionalProviders?: string[], environment: 'web' | 'repl' | 'test' = 'test') {
+export const fs = new Filesystem(join(__dirname, 'app'))
+
+export class MyFakeLogger extends FakeLogger {
+  constructor (public assert, config, pino?) {
+    super(config, pino)
+  }
+
+  error (message: string) {
+    this.assert.isTrue(message.includes('name=TestBull-name id='))
+  }
+}
+
+export async function setupApplication (environment: 'web' | 'repl' | 'test' = 'test') {
   await fs.add('.env', '')
 
   await fs.add(
@@ -18,44 +30,48 @@ export async function setupApplication (additionalProviders?: string[], environm
     `
   )
 
-  await fs.add('contracts/bull.ts',
-    `
-    declare module '@ioc:Rocketseat/Bull' {
-        interface BullConnectionsList {
-            local: BullConnectionContract;
-        }
-    }
-    `)
+  await fs.add('app/Jobs/SomeJob.ts',
+  `
+    export default class SomeJob {
+      public key = 'SomeJob-key'
+    
+      public async handle () {
+        return 'good luck'
+      }
+    }  
+  `)
+
+  await fs.add('start/jobs.ts',
+  `
+    export default ['App/SomeJob']
+  `)
 
   await fs.add('config/bull.ts',
     `
-    import Env from '@ioc:Adonis/Core/Env'
     import { BullConfig } from '@ioc:Rocketseat/Bull'
 
-    const bullConfig: BullConfig = {
-        connection: Env.get('BULL_CONNECTION'),
+    const bullConfig  = {
+        connection: 'local',
         
         connections: {
             local: {
-            host: Env.get('REDIS_HOST'),
-            port: Env.get('REDIS_PORT'),
-            password: Env.get('REDIS_PASSWORD', ''),
-            db: 0,
-            keyPrefix: '',
+              host: 'localhost',
+              port: 6379,
+              password: '',
+              db: 0,
+              keyPrefix: '',
             },
         },
-    }
+    } as unknown as BullConfig
 
     export default bullConfig
     `)
 
   const app = new Application(fs.basePath, environment, {
-    aliases: {
-      App: './app'
-    },
     providers: [
-      '@adonisjs/core'
-    ].concat(additionalProviders || [])
+      '@adonisjs/core',
+      '../../providers/BullProvider'
+    ]
   })
 
   app.setup()
