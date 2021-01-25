@@ -321,3 +321,19 @@ export default class JobExceptionHandler extends BullExceptionHandler {
   }
 }
 ```
+
+## Contributing
+
+Thank you for being interested in making this package better. We encourage everyone to help improve this project with new features, bug fixes, or performance improvements. Please take a little bit of your time to read our guide to make this process faster and easier.
+
+### Contribution Guidelines
+
+To understand how to submit an issue, commit and create pull requests, check our [Contribution Guidelines](/.github/CONTRIBUTING.md).
+
+### Code of Conduct
+
+We expect you to follow our [Code of Conduct](/.github/CODE_OF_CONDUCT.md). You can read it to understand what kind of behavior will and will not be tolerated.
+
+## License
+
+MIT License © [Rocketseat](https://github.com/Rocketseat)
