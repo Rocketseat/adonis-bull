@@ -1,12 +1,12 @@
 declare module '@ioc:Rocketseat/Bull' {
   import * as Bullmq from 'bullmq'
 
-  export interface Queue<T = any, R = any, N extends string = string> extends Bullmq.Queue<T, R, N> {}
+  export interface Queue<T = any> extends Bullmq.Queue<T> {}
   export interface Processor extends Bullmq.Processor {}
   export interface JobsOptions extends Bullmq.JobsOptions {}
   export interface QueueOptions extends Bullmq.QueueOptions {}
   export interface WorkerOptions extends Bullmq.WorkerOptions {}
-  export interface Job<T = any, R = any, N extends string = string> extends Bullmq.Job<T, R, N> {}
+  export interface Job<T = any, R = any> extends Bullmq.Job<T, R> {}
 
   export type BullConnectionContract = Exclude<
     QueueOptions['connection'],
