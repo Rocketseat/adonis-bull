@@ -83,7 +83,7 @@
     "build/instructions.js",
     "build/instructions.d.ts"
   ],
-  "types": "build/adonis-typings/index.d.ts",
+  "typings": "build/adonis-typings/index.d.ts",
   "adonisjs": {
     "instructions": "./build/instructions.js",
     "types": "@rocketseat/adonis-bull",
