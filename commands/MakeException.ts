@@ -8,7 +8,7 @@ export default class MakeException extends BaseCommand {
   /**
    * Execute command
    */
-  public async run (): Promise<void> {
+  public async run(): Promise<void> {
     const stub = join(__dirname, '..', 'templates', 'handler.txt')
 
     const path = this.application.resolveNamespaceDirectory('exceptions')

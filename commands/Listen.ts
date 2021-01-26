@@ -5,7 +5,7 @@ export default class Listen extends BaseCommand {
   public static description = 'Start the Bull listener'
   public static settings = {
     loadApp: true,
-    stayAlive: true
+    stayAlive: true,
   }
 
   /**
@@ -17,20 +17,26 @@ export default class Listen extends BaseCommand {
   /**
    * Custom port for the bull-board
    */
-  @flags.number({ description: "Run bull's dashboard in the provided port", alias: 'p' })
+  @flags.number({
+    description: "Run bull's dashboard in the provided port",
+    alias: 'p',
+  })
   public port: number
 
   /**
    * Execute command
    */
-  public async run (): Promise<void> {
+  public async run(): Promise<void> {
     const bull = this.application.container.use('Rocketseat/Bull')
 
     console.log({ board: this.board })
 
     bull.process()
 
-    if (this.board || (typeof this.board === 'undefined' && typeof this.port !== 'undefined')) {
+    if (
+      this.board ||
+      (typeof this.board === 'undefined' && typeof this.port !== 'undefined')
+    ) {
       bull.ui(this.port)
     }
   }

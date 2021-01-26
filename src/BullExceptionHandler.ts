@@ -7,9 +7,9 @@ import { Job } from 'bullmq'
  * lifecycle and makes appropriate response for them.
  */
 export abstract class BullExceptionHandler {
-  constructor (protected logger: LoggerContract) {}
+  constructor(protected logger: LoggerContract) {}
 
-  public async handle (error: any, job: Job) {
+  public async handle(error: any, job: Job) {
     if (typeof error.handle === 'function') {
       return error.handle(error, job)
     }

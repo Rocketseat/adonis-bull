@@ -11,7 +11,7 @@ declare module '@ioc:Rocketseat/Bull' {
   export type BullConnectionContract = Exclude<
     QueueOptions['connection'],
     undefined
-  >;
+  >
 
   /**
    * A list of typed connections defined in the user land using
@@ -24,18 +24,18 @@ declare module '@ioc:Rocketseat/Bull' {
    * everywhere.
    */
   export interface BullConfig {
-    connection: keyof BullConnectionsList;
-    connections: { [P in keyof BullConnectionsList]: BullConnectionsList[P] };
+    connection: keyof BullConnectionsList
+    connections: { [P in keyof BullConnectionsList]: BullConnectionsList[P] }
   }
 
   export interface JobContract<T = any> {
-    key: string;
-    options?: JobsOptions;
-    workerOptions?: WorkerOptions;
-    queueOptions?: QueueOptions;
-    concurrency?: number;
-    handle: Processor;
-    boot?: (queue: Queue<T>) => void;
+    key: string
+    options?: JobsOptions
+    workerOptions?: WorkerOptions
+    queueOptions?: QueueOptions
+    concurrency?: number
+    handle: Processor
+    boot?: (queue: Queue<T>) => void
     onCompleted?: (...args: any[]) => void
     onProgress?: (...args: any[]) => void
     onFailed?: (...args: any[]) => void
@@ -46,39 +46,42 @@ declare module '@ioc:Rocketseat/Bull' {
     onDrained?: (...args: any[]) => void
   }
 
-  export interface EventListener { eventName: string; method: string }
+  export interface EventListener {
+    eventName: string
+    method: string
+  }
 
   export interface QueueContract<T = any> extends JobContract<T> {
-    bull: Queue<T>;
-    listeners: EventListener[];
-    instance: JobContract<T>;
+    bull: Queue<T>
+    listeners: EventListener[]
+    instance: JobContract<T>
   }
 
   export interface BullManagerContract {
-    queues: { [key: string]: QueueContract };
+    queues: { [key: string]: QueueContract }
 
-    getByKey(key: string): QueueContract;
+    getByKey(key: string): QueueContract
 
     add<T>(
       name: string,
       data: T,
       jobOptions?: JobsOptions
-    ): Promise<Job<any, any>>;
+    ): Promise<Job<any, any>>
 
     schedule<T>(
       name: string,
       data: T,
       date: number | Date,
       jobOptions?: JobsOptions
-    ): Promise<Job<any, any>>;
+    ): Promise<Job<any, any>>
 
-    remove(name: string, jobId: string): Promise<void>;
+    remove(name: string, jobId: string): Promise<void>
 
-    ui(port?: number): void;
+    ui(port?: number): void
 
-    shutdown(): Promise<void>;
+    shutdown(): Promise<void>
 
-    process(): BullManagerContract;
+    process(): BullManagerContract
   }
 
   const Bull: BullManagerContract

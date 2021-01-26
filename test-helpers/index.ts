@@ -7,16 +7,18 @@ import { FakeLogger } from '@adonisjs/logger/build/standalone'
 export const fs = new Filesystem(join(__dirname, 'app'))
 
 export class MyFakeLogger extends FakeLogger {
-  constructor (public assert, config, pino?) {
+  constructor(public assert, config, pino?) {
     super(config, pino)
   }
 
-  error (message: string) {
+  error(message: string) {
     this.assert.isTrue(message.includes('name=TestBull-name id='))
   }
 }
 
-export async function setupApplication (environment: 'web' | 'repl' | 'test' = 'test') {
+export async function setupApplication(
+  environment: 'web' | 'repl' | 'test' = 'test'
+) {
   await fs.add('.env', '')
 
   await fs.add(
@@ -30,8 +32,9 @@ export async function setupApplication (environment: 'web' | 'repl' | 'test' = '
     `
   )
 
-  await fs.add('app/Jobs/SomeJob.ts',
-  `
+  await fs.add(
+    'app/Jobs/SomeJob.ts',
+    `
     export default class SomeJob {
       public key = 'SomeJob-key'
     
@@ -39,14 +42,18 @@ export async function setupApplication (environment: 'web' | 'repl' | 'test' = '
         return 'good luck'
       }
     }  
-  `)
-
-  await fs.add('start/jobs.ts',
   `
-    export default ['App/SomeJob']
-  `)
+  )
 
-  await fs.add('config/bull.ts',
+  await fs.add(
+    'start/jobs.ts',
+    `
+    export default ['App/SomeJob']
+  `
+  )
+
+  await fs.add(
+    'config/bull.ts',
     `
     import { BullConfig } from '@ioc:Rocketseat/Bull'
 
@@ -65,13 +72,11 @@ export async function setupApplication (environment: 'web' | 'repl' | 'test' = '
     } as unknown as BullConfig
 
     export default bullConfig
-    `)
+    `
+  )
 
   const app = new Application(fs.basePath, environment, {
-    providers: [
-      '@adonisjs/core',
-      '../../providers/BullProvider'
-    ]
+    providers: ['@adonisjs/core', '../../providers/BullProvider'],
   })
 
   app.setup()
