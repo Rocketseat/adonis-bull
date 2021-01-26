@@ -3,15 +3,21 @@
 </h1>
 
 <p align="center">
-  A <a href="https://github.com/OptimalBits/bull/">Bull</a> provider for the Adonis framework. </br>
+  A <a href="https://github.com/taskforcesh/bullmq">Bull</a> provider for <a href="https://adonisjs.com/">AdonisJs</a> </br>
   Adonis Bull provides an easy way to start using Bull. The fastest, most reliable, Redis-based queue for Node.
 </p>
 
+> This documentation refers to the stable version of Adonis Bull, for Adonis v4.x <br />
+> If you are using Adonis v5, [click here](https://github.com/Rocketseat/adonis-bull/tree/alpha).
+
 ## Install
 
-`adonis install @rocketseat/adonis-bull`
+```sh
+adonis install @rocketseat/adonis-bull
+```
 
-## Use
+## Usage
+
 Register the Bull commands at `start/app.js`
 ```js
 const aceProviders = [
