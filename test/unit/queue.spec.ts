@@ -69,7 +69,6 @@ test.group('Bull', (group) => {
         public async handle() {}
 
         public onCompleted() {
-          console.log('me chamo')
           assert.isOk(true)
         }
       })()
