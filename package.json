@@ -3,6 +3,7 @@
   "description": "The easiest way to start using an asynchronous job queue with AdonisJS. Supports version 5 and 4.x",
   "version": "0.2.2",
   "main": "build/providers/BullProvider.js",
+  "types": "build/adonis-typings/index.d.ts",
   "license": "MIT",
   "scripts": {
     "test:local": "node japaFile.js",
@@ -10,9 +11,20 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "copyfiles": "copyfiles \"templates/**/*.txt\" build",
     "compile": "tsc",
+    "prebuild": "rimraf ./build",
     "build": "npm run compile && npm run copyfiles",
     "lint": "eslint --ignore-path .gitignore",
-    "format": "prettier \"**/*.ts\" --write --ignore-path .gitignore"
+    "format": "prettier \"**/*.ts\" --write --ignore-path .gitignore",
+    "prepublishOnly": "npm run build",
+    "publish:alpha": "np --branch=alpha --tag=alpha"
+  },
+  "np": {
+    "yarn": false,
+    "contents": ".",
+    "anyBranch": false
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "nyc": {
     "exclude": [
@@ -55,10 +67,6 @@
     "url": "https://github.com/rocketseat/adonis-bull/issues"
   },
   "homepage": "https://github.com/rocketseat/adonis-bull#readme",
-  "publishConfig": {
-    "access": "public",
-    "tag": "alpha"
-  },
   "devDependencies": {
     "@adonisjs/ace": "^6.9.3",
     "@adonisjs/application": "^2.0.0",
@@ -67,18 +75,13 @@
     "@adonisjs/logger": "^2.1.0",
     "@adonisjs/mrm-preset": "^2.4.0",
     "@adonisjs/sink": "^1.0.17",
+    "@commitlint/cli": "^11.0.0",
     "@poppinss/dev-utils": "^1.0.11",
     "@types/node": "^14.6.1",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",
-    "copyfiles": "^2.3.0",
-    "japa": "^3.1.1",
-    "nyc": "^15.1.0",
-    "reflect-metadata": "^0.1.13",
-    "ts-node": "^9.0.0",
-    "typescript": "^3.9.7",
-    "@commitlint/cli": "^11.0.0",
     "commitlint-config-rocketseat": "^0.0.1",
+    "copyfiles": "^2.3.0",
     "coveralls": "^3.0.7",
     "delay": "^4.3.0",
     "eslint": "^7.18.0",
@@ -90,8 +93,15 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^4.3.8",
+    "japa": "^3.1.1",
     "lint-staged": "^10.5.3",
-    "prettier": "^2.2.1"
+    "np": "^7.2.0",
+    "nyc": "^15.1.0",
+    "prettier": "^2.2.1",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2",
+    "ts-node": "^9.0.0",
+    "typescript": "^3.9.7"
   },
   "repository": {
     "type": "git",
