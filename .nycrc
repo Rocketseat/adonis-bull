@@ -6,7 +6,6 @@
   ],
   "exclude": [
     "src/BullExceptionHandler.ts",
-    "**/*.spec.js",
     "**/*.spec.ts"
   ]
 }
