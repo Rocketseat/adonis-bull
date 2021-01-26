@@ -16,9 +16,12 @@ export default class MakeJob extends BaseCommand {
   /**
    * Execute command
    */
-  public async run (): Promise<void> {
+  public async run(): Promise<void> {
     const stub = join(__dirname, '..', 'templates', 'job.txt')
-    const jobName = new StringTransformer(this.name).changeCase('pascalcase').changeForm('singular').toValue()
+    const jobName = new StringTransformer(this.name)
+      .changeCase('pascalcase')
+      .changeForm('singular')
+      .toValue()
 
     const path = this.application.resolveNamespaceDirectory('jobs')
     const rootDir = this.application.cliCwd || this.application.appRoot

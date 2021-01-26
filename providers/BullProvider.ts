@@ -5,9 +5,9 @@ import { BullManagerContract } from '@ioc:Rocketseat/Bull'
  * Provider to bind bull to the container
  */
 export default class BullProvider {
-  constructor (protected container: IocContract) {}
+  constructor(protected container: IocContract) {}
 
-  public register () {
+  public register() {
     this.container.bind('Rocketseat/Bull/BullExceptionHandler', () => {
       const { BullExceptionHandler } = require('../src/BullExceptionHandler')
       return BullExceptionHandler
@@ -27,7 +27,7 @@ export default class BullProvider {
     this.container.alias('Rocketseat/Bull', 'Bull')
   }
 
-  public async shutdown () {
+  public async shutdown() {
     await this.container.use<BullManagerContract>('Rocketseat/Bull').shutdown()
   }
 }
