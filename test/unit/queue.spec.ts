@@ -13,16 +13,16 @@ import { fs, MyFakeLogger } from '../../test-helpers'
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const CONNECTION_CONFIG = {
+const CONNECTION_CONFIG = ({
   connection: 'local',
   connections: {
     local: {
       host: process.env.REDIS_HOST || '127.0.0.1',
       port: process.env.REDIS_PORT || 6379,
-      password: process.env.REDIS_PASSWORD || ''
-    }
-  }
-} as unknown as BullConfig
+      password: process.env.REDIS_PASSWORD || '',
+    },
+  },
+} as unknown) as BullConfig
 
 test.group('Bull', (group) => {
   group.beforeEach(async () => {
@@ -35,12 +35,14 @@ test.group('Bull', (group) => {
     ioc.bind('App/Jobs/TestBull', () => ({
       key: 'TestBull-name',
       concurrency: 2,
-      async handle () {}
+      async handle() {},
     }))
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, [
+      'App/Jobs/TestBull',
+    ])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -63,11 +65,10 @@ test.group('Bull', (group) => {
 
     ioc.singleton('App/Jobs/TestBull', () => {
       return new (class Job implements JobContract {
-        public key = 'TestBull-name';
-        public async handle () {
-        }
+        public key = 'TestBull-name'
+        public async handle() {}
 
-        public onCompleted () {
+        public onCompleted() {
           console.log('me chamo')
           assert.isOk(true)
         }
@@ -76,7 +77,9 @@ test.group('Bull', (group) => {
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, [
+      'App/Jobs/TestBull',
+    ])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -99,15 +102,17 @@ test.group('Bull', (group) => {
     ioc.bind('App/Jobs/TestBull', () => ({
       key: 'TestBull-name',
       concurrency: 2,
-      async handle () {},
-      boot (queue) {
+      async handle() {},
+      boot(queue) {
         assert.isOk(queue)
-      }
+      },
     }))
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, [
+      'App/Jobs/TestBull',
+    ])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -124,8 +129,8 @@ test.group('Bull', (group) => {
 
     ioc.singleton('App/Jobs/TestBull', () => {
       return new (class Job implements JobContract {
-        public key = 'TestBull-name';
-        public async handle () {
+        public key = 'TestBull-name'
+        public async handle() {
           return expectedResponse
         }
       })()
@@ -133,7 +138,9 @@ test.group('Bull', (group) => {
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, [
+      'App/Jobs/TestBull',
+    ])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -159,8 +166,8 @@ test.group('Bull', (group) => {
 
     ioc.singleton('App/Jobs/TestBull', () => {
       return new (class Job implements JobContract {
-        public key = 'TestBull-name';
-        public async handle () {
+        public key = 'TestBull-name'
+        public async handle() {
           throw new Error('Error with the current job')
         }
       })()
@@ -169,11 +176,11 @@ test.group('Bull', (group) => {
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
     class FakeExceptionHandler extends BullExceptionHandler {
-      constructor () {
+      constructor() {
         super(logger)
       }
 
-      async handle (error: Error, job: Job) {
+      async handle(error: Error, job: Job) {
         assert.equal(error.message, 'Error with the current job')
         assert.isDefined(job)
       }
@@ -181,7 +188,9 @@ test.group('Bull', (group) => {
 
     ioc.bind('App/Exceptions/BullHandler', () => new FakeExceptionHandler())
 
-    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, [
+      'App/Jobs/TestBull',
+    ])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -205,14 +214,16 @@ test.group('Bull', (group) => {
       'App/Jobs/TestBull',
       () =>
         new (class Job implements JobContract {
-          public key = 'TestBull-name';
-          public async handle () {}
+          public key = 'TestBull-name'
+          public async handle() {}
         })()
     )
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, [
+      'App/Jobs/TestBull',
+    ])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -233,18 +244,24 @@ test.group('Bull', (group) => {
       'App/Jobs/TestBull',
       () =>
         new (class Job implements JobContract {
-          public key = 'TestBull-name';
-          public async handle () {}
+          public key = 'TestBull-name'
+          public async handle() {}
         })()
     )
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, [
+      'App/Jobs/TestBull',
+    ])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
-    const job = await bull.schedule(jobDefinition.key, data, new Date(Date.now() + 1000))
+    const job = await bull.schedule(
+      jobDefinition.key,
+      data,
+      new Date(Date.now() + 1000)
+    )
 
     assert.equal(jobDefinition.key, job.name)
     assert.equal(job.opts.delay, 1000)
@@ -259,12 +276,14 @@ test.group('Bull', (group) => {
 
     ioc.bind('App/Jobs/TestBull', () => ({
       key: 'TestBull-name',
-      async handle () {}
+      async handle() {},
     }))
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, [
+      'App/Jobs/TestBull',
+    ])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -280,12 +299,14 @@ test.group('Bull', (group) => {
 
     ioc.bind('App/Jobs/TestBull', () => ({
       key: 'TestBull-name',
-      async handle () {}
+      async handle() {},
     }))
 
     const logger = (new FakeLogger({} as any) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, [
+      'App/Jobs/TestBull',
+    ])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
@@ -306,16 +327,21 @@ test.group('Bull', (group) => {
 
     ioc.singleton('App/Jobs/TestBull', () => {
       return new (class Job implements JobContract {
-        public key = 'TestBull-name';
-        public async handle () {
+        public key = 'TestBull-name'
+        public async handle() {
           throw new Error('Error with the current job')
         }
       })()
     })
 
-    const logger = new MyFakeLogger(assert, {} as any) as unknown as LoggerContract
+    const logger = (new MyFakeLogger(
+      assert,
+      {} as any
+    ) as unknown) as LoggerContract
 
-    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, ['App/Jobs/TestBull'])
+    const bull = new BullManager(ioc, logger, CONNECTION_CONFIG, [
+      'App/Jobs/TestBull',
+    ])
     const jobDefinition = ioc.use('App/Jobs/TestBull')
     const data = { test: 'data' }
 
