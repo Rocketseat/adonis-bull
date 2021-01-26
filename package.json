@@ -11,7 +11,7 @@
     "compile": "tsc",
     "build": "npm run compile && npm run copyfiles",
     "lint": "eslint --ignore-path .gitignore",
-    "format": "prettier \"**/*.js\" --write --ignore-path .gitignore"
+    "format": "prettier \"**/*.ts\" --write --ignore-path .gitignore"
   },
   "nyc": {
     "exclude": [
@@ -31,7 +31,7 @@
     }
   },
   "lint-staged": {
-    "*.js": [
+    "*.ts": [
       "yarn lint --fix",
       "yarn format"
     ]
