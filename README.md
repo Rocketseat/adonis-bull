@@ -3,70 +3,74 @@
 </h1>
 
 <p align="center">
-  A <a href="https://github.com/taskforcesh/bullmq">Bull</a> provider for the Adonis framework. </br>
+  A <a href="https://github.com/taskforcesh/bullmq">Bull</a> provider for <a href="https://adonisjs.com/">AdonisJs</a> </br>
   Adonis Bull provides an easy way to start using Bull. The fastest, most reliable, Redis-based queue for Node.
 </p>
 
-<br /><br />
+<br />
 
-# Table of Contents
-- [Install](#install)
-  - [Yarn](#yarn)
-  - [Npm](#npm)
+> This documentation refers to the next version of Adonis Bull, which adds support to Adonis v5. <br />
+> If you are using Adonis 4.x, [click here](https://github.com/Rocketseat/adonis-bull/tree/master).
+
+## Table of Contents
+
+- [Getting Started](#getting-started)
 - [Setup](#setup)
+  * [Connections](#connections)
 - [Initialization](#initialization)
-  - [Ace command](#ace-command)
-  - [Http server](#http-server)
+  * [ace command](#ace-command)
+  * [http server](#http-server)
 - [Usage](#usage)
-  - [Creating your job](#creating-your-job)
-  - [Events](#events)
-  - [Processing the jobs](#processing-the-jobs)
-    - [Simple job](#simple-job)
-    - [Scheduled job](#scheduled-job)
-    - [Advanced jobs](#advanced-jobs)
-  - [Exceptions](#exceptions)
+  * [Creating your job](#creating-your-job)
+  * [Events](#events)
+  * [Processing the jobs](#processing-the-jobs)
+  * [Simple job](#simple-job)
+  * [Scheduled job](#scheduled-job)
+    + [Other ways of using schedule](#other-ways-of-using-schedule)
+    + [Using schedule with a third party lib](#using-schedule-with-a-third-party-lib)
+  * [Advanced jobs](#advanced-jobs)
+  * [Exceptions](#exceptions)
+- [Contributing](#contributing)
+  * [Contribution Guidelines](#contribution-guidelines)
+  * [Code of Conduct](#code-of-conduct)
+- [License](#license)
 
 
+## Getting Started
 
-<br /><br />
-
-## Install
 Let's start by installing the package in our project.
 
-#### YARN
+**Yarn**:
 
-```
+```sh
 yarn add @rocketseat/adonis-bull@alpha
 ```
 
-#### NPM
+**NPM**:
 
-```
+```sh
 npm install @rocketseat/adonis-bull@alpha
 ```
 
-<br /><br />
-
 ## Setup
 
-Okay, now we need to configure the project. But don't worry, we will do this for you with a command.
+You can configure the project by running the following command:
 
+```sh
+node ace invoke @rocketseat/adonis-bull
 ```
-node ace invoke @rocketseat/adonis-bull@alpha
-```
 
-You must choose between two start options: `ace command` or `http server`. <br /><br />
-_You can get more information about these options in the [initialization](#initialization) session_
+When prompted, you must choose between two start options: `ace command` or `http server`.
 
-<br />
+_ps: If you don't know what option you should choose. Check the [initialization](#initialization) session._
 
 ### Connections
 
-After executing the `invoke` command the `config/bull.ts` file will be created, where you can define the **Redis** connections. A local connection already exists by default. 
+After executing the `invoke` command the `config/bull.ts` file will be created, where you can define the **Redis** connections. A local connection already exists by default.
 
 To add more connections it is important to make sure that it is also defined in the contracts.
 
-An important step is to set the environment variables in your `.env` and validate them in the` env.ts` file
+An important step is to set the environment variables in your `.env` and validate them in the `env.ts` file.
 
 ```js
 BULL_REDIS_HOST: Env.schema.string({ format: 'host' }),
@@ -74,27 +78,25 @@ BULL_REDIS_PORT: Env.schema.number(),
 BULL_REDIS_PASSWORD: Env.schema.string.optional(),
 ```
 
-<br /><br />
-
 ## Initialization
 
-The bull can be started in two different ways and this was defined by you in the [setup](#setup) session
+The bull can be started in two different ways and this was defined by you in the [setup](#setup) session.
 
 ### `ace command`
 
-The bull will be in a separate instance from the http server. To initialize it you can execute the command:
+The bull will be in a separate instance from the HTTP server. To initialize it you can execute the command:
 
-```
+```sh
 node ace bull:listen
 ```
 
 You can define a port with the `--port` flag and you can initialize the [bull-board](https://github.com/vcapretz/bull-board) with the `--board` flag.
 
-<br />
-
 ### `http server`
 
-When selecting this option a startup file will be created `start / bull.ts`, with which the bull will be started together with its server and will share the same instance. Your `start / bull.ts` file should look like this:
+When selecting this option a startup file will be created at `start/bull.ts`. The bull will be started together with its server and will share the same instance.
+
+The `start/bull.ts` file will look like this:
 
 ```js
 import Bull from '@ioc:Rocketseat/Bull'
@@ -110,15 +112,13 @@ if (isDevelopment) {
 }
 ```
 
-The bull board will only be started in the development environment and by default on port `9999`.
-
-<br /> <br />
+The bull board will start in the development environment on port `9999`.
 
 ## Usage
 
 ### Creating your job
 
-Create a new job file by executing the following ace command.
+Create a new job file by executing the following ace command:
 
 ```bash
 node ace make:job userRegisterEmail
@@ -126,8 +126,7 @@ node ace make:job userRegisterEmail
 # ✔  create    app/Jobs/UserRegisterEmail.ts
 ```
 
-This command will create a file with the `jobs` that will be processed at `start/jobs.ts` 
-and add the job created.
+This command will generate a file at `app/Jobs` and add the created job at `start/jobs.ts`.
 
 ```ts
 const jobs = ["App/Jobs/UserRegisterEmail"]
@@ -135,8 +134,7 @@ const jobs = ["App/Jobs/UserRegisterEmail"]
 export default jobs
 ```
 
-Your job will be generated within `app/Jobs`. <br />
-_Example of implementing a job for sending emails._ 
+This is an example of how to implement a job for sending emails:
 
 ```ts
 import { JobContract } from '@ioc:Rocketseat/Bull'
@@ -179,12 +177,11 @@ export default class UserRegisterEmail implements JobContract {
 }
 ```
 
-<br />
-
 ### Events
-#
 
-The package has support for all events triggered in the bull, just add "on" and complete with the name of the event (e.g., `onCompleted()`, `onActive()`, `onWaiting()` and etc).
+The package has support for all events triggered by bull.
+
+To define an event you must prefix it with "on" and add the event name (e.g., `onCompleted()`, `onActive()`, `onWaiting()` and etc).
 
 ```ts
 export default class UserRegisterEmail implements JobContract {
@@ -195,10 +192,7 @@ export default class UserRegisterEmail implements JobContract {
 }
 ```
 
-<br />
-
 ### Processing the jobs
-#
 
 ### Simple job
 
@@ -220,8 +214,6 @@ export default class UserController {
   }
 }
 ```
-
-<br />
 
 ### Scheduled job
 
@@ -245,26 +237,24 @@ export default class HolidayOnSaleController {
 }
 ```
 
-This `job` will be sent only on the specific date, wich for example here is on November 15th at noon.
+This `job` will be sent only on the specific date.
 
-When finishing a date, never use past dates because it will cause an error.
+If a date has already passed, an error will occur.
 
-other ways of using `schedule`:
+#### Other ways of using schedule
 
 ```ts
 Bull.schedule(key, data, new Date("2019-11-15 12:00:00"));
 Bull.schedule(key, data, 60 * 1000); // 1 minute from now.
 ```
 
-Or with a third party lib:
+#### Using schedule with a third party lib
 
 ```ts
 import humanInterval from 'human-interval'
 
 Bull.schedule(key, data, humanInterval("2 hours")); // 2 hours from now
 ```
-
-<br />
 
 ### Advanced jobs
 
@@ -278,20 +268,18 @@ Bull.add(key, data, {
 });
 ```
 
-This `job` will be run at 12:30 PM, only on wednesdays and fridays.
-
-<br />
+This `job` will run at 12:30 PM, on Wednesdays and Fridays.
 
 ### Exceptions
-#
 
-To have better control over errors that can occur in jobs, events that fail can be handled by creating an ExceptionHandler with the command:
+To have better control over errors that can occur in jobs, events that fail can be handled by creating an `ExceptionHandler`:
 
-```ssh
+```sh
 node ace bull:exception
 ```
 
-A `BullHandler.ts` file will be generated in `App/Exceptions` folder. <br />
+A `BullHandler.ts` file will be generated at `App/Exceptions`.
+
 You can change this file to handle job errors as you prefer. Here is an example using **Sentry**:
 
 ```ts
@@ -315,7 +303,7 @@ export default class JobExceptionHandler extends BullExceptionHandler {
       Sentry.configureScope(scope => {
         scope.setExtra(job);
       });
-  
+
       Sentry.captureException(error);
     }
   }
