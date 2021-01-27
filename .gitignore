@@ -20,6 +20,8 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
+# Coveralls configuration file
+.coveralls.yml
 
 # nyc test coverage
 .nyc_output
