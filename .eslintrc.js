@@ -1,4 +1,5 @@
 module.exports = {
+  parser: '@typescript-eslint/parser',
   env: {
     es6: true,
     node: true,
@@ -14,5 +15,6 @@ module.exports = {
   },
   rules: {
     'prettier/prettier': 'error',
+    'no-useless-constructor': 'off',
   },
 }

@@ -3,100 +3,147 @@
 </h1>
 
 <p align="center">
-  A <a href="https://github.com/OptimalBits/bull/">Bull</a> provider for the Adonis framework. </br>
+  A <a href="https://github.com/taskforcesh/bullmq">Bull</a> provider for <a href="https://adonisjs.com/">AdonisJs</a> </br>
   Adonis Bull provides an easy way to start using Bull. The fastest, most reliable, Redis-based queue for Node.
 </p>
 
-## Install
+<br />
 
-`adonis install @rocketseat/adonis-bull`
+> This documentation refers to the next version of Adonis Bull, which adds support to Adonis v5. <br />
+> If you are using Adonis 4.x, [click here](https://github.com/Rocketseat/adonis-bull/tree/master).
 
-## Use
-Register the Bull commands at `start/app.js`
-```js
-const aceProviders = [
-  '@rocketseat/adonis-bull/providers/Command',
-];
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Setup](#setup)
+  * [Connections](#connections)
+- [Initialization](#initialization)
+  * [ace command](#ace-command)
+  * [http server](#http-server)
+- [Usage](#usage)
+  * [Creating your job](#creating-your-job)
+  * [Events](#events)
+  * [Processing the jobs](#processing-the-jobs)
+  * [Simple job](#simple-job)
+  * [Scheduled job](#scheduled-job)
+    + [Other ways of using schedule](#other-ways-of-using-schedule)
+    + [Using schedule with a third party lib](#using-schedule-with-a-third-party-lib)
+  * [Advanced jobs](#advanced-jobs)
+  * [Exceptions](#exceptions)
+- [Contributing](#contributing)
+  * [Contribution Guidelines](#contribution-guidelines)
+  * [Code of Conduct](#code-of-conduct)
+- [License](#license)
+
+
+## Getting Started
+
+Let's start by installing the package in our project.
+
+**Yarn**:
+
+```sh
+yarn add @rocketseat/adonis-bull@alpha
 ```
 
-Register the Bull provider at `start/app.js`
+**NPM**:
 
-```js
-const providers = [
-  //...
-  "@rocketseat/adonis-bull/providers/Bull"
-];
+```sh
+npm install @rocketseat/adonis-bull@alpha
 ```
 
-Create a file with the `jobs` that will be processed at `start/jobs.js`:
+## Setup
 
-```js
-module.exports = ["App/Jobs/UserRegisterEmail"];
+You can configure the project by running the following command:
+
+```sh
+node ace invoke @rocketseat/adonis-bull
 ```
 
-Add the config file at `config/bull.js`:
+When prompted, you must choose between two start options: `ace command` or `http server`.
+
+_ps: If you don't know what option you should choose. Check the [initialization](#initialization) session._
+
+### Connections
+
+After executing the `invoke` command the `config/bull.ts` file will be created, where you can define the **Redis** connections. A local connection already exists by default.
+
+To add more connections it is important to make sure that it is also defined in the contracts.
+
+An important step is to set the environment variables in your `.env` and validate them in the `env.ts` file.
 
 ```js
-"use strict";
-
-const Env = use("Env");
-
-module.exports = {
-  // redis connection
-  connection: Env.get("BULL_CONNECTION", "bull"),
-  bull: {
-    redis: {
-      host: "127.0.0.1",
-      port: 6379,
-      password: null,
-      db: 0,
-      keyPrefix: ""
-    }
-  },
-  remote: "redis://redis.example.com?password=correcthorsebatterystaple"
-};
+BULL_REDIS_HOST: Env.schema.string({ format: 'host' }),
+BULL_REDIS_PORT: Env.schema.number(),
+BULL_REDIS_PASSWORD: Env.schema.string.optional(),
 ```
 
-In the above file you can define redis connections, there you can pass all `Bull` queue configurations described [here](https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queue).
+## Initialization
 
-Create a file to initiate `Bull` at `preloads/bull.js`:
+The bull can be started in two different ways and this was defined by you in the [setup](#setup) session.
+
+### `ace command`
+
+The bull will be in a separate instance from the HTTP server. To initialize it you can execute the command:
+
+```sh
+node ace bull:listen
+```
+
+You can define a port with the `--port` flag and you can initialize the [bull-board](https://github.com/vcapretz/bull-board) with the `--board` flag.
+
+### `http server`
+
+When selecting this option a startup file will be created at `start/bull.ts`. The bull will be started together with its server and will share the same instance.
+
+The `start/bull.ts` file will look like this:
 
 ```js
-const Bull = use("Rocketseat/Bull");
+import Bull from '@ioc:Rocketseat/Bull'
+import Env from '@ioc:Adonis/Core/Env'
+
+const PORT = 9999
+const isDevelopment = Env.get('NODE_ENV') === 'development'
 
 Bull.process()
-  // Optionally you can start BullBoard:
-  .ui(9999); // http://localhost:9999
-// You don't need to specify the port, the default number is 9999
+
+if (isDevelopment) {
+  Bull.ui(PORT)
+}
 ```
 
-Add .preLoad in server.js to initialize the bull preload
+The bull board will start in the development environment on port `9999`.
 
-```js
-new Ignitor(require('@adonisjs/fold'))
-  .appRoot(__dirname)
-  .preLoad('preloads/bull') // Add This Line
-  .fireHttpServer()
-  .catch(console.error)
+## Usage
+
+### Creating your job
+
+Create a new job file by executing the following ace command:
+
+```bash
+node ace make:job userRegisterEmail
+
+# ✔  create    app/Jobs/UserRegisterEmail.ts
 ```
 
-## Creating your job
+This command will generate a file at `app/Jobs` and add the created job at `start/jobs.ts`.
 
-Create a class that mandatorily has the methods `key` and `handle`.
+```ts
+const jobs = ["App/Jobs/UserRegisterEmail"]
 
-The `key` method is the unique identification of each job. It has to be a `static get` method.
+export default jobs
+```
 
-The `handle` is the method that contains the functionality of your `job`.
+This is an example of how to implement a job for sending emails:
 
-```js
-const Mail = use("Mail");
+```ts
+import { JobContract } from '@ioc:Rocketseat/Bull'
+import Mail from '@ioc:Adonis/Addons/Mail'
 
-class UserRegisterEmail {
-  static get key() {
-    return "UserRegisterEmail-key";
-  }
+export default class UserRegisterEmail implements JobContract {
+  public key = 'UserRegisterEmail'
 
-  async handle(job) {
+  public async handle(job) {
     const { data } = job; // the 'data' variable has user data
 
     await Mail.send("emails.welcome", data, message => {
@@ -109,54 +156,54 @@ class UserRegisterEmail {
     return data;
   }
 }
-
-module.exports = UserRegisterEmail;
 ```
 
-You can use the `connection` static get method to specify which connection your `job` will work.
+You can override the default `configs`.
 
-```js
-class UserRegisterEmail {
-  // ...
-  static get connection() {
-    return "remote";
-  }
+```ts
+import { JobsOptions, QueueOptions, WorkerOptions, Job } from 'bullmq'
+
+export default class UserRegisterEmail implements JobContract {
+  ...
+  public options: JobsOptions = {}
+
+  public queueOptions: QueueOptions = {}
+
+  public workerOptions: WorkerOptions = {}
+
+  public concurrency = 1
+
+...
 }
 ```
 
 ### Events
 
-You can config the events related to the `job` to have more control over it
+The package has support for all events triggered by bull.
 
-```js
-const Ws = use('Ws')
+To define an event you must prefix it with "on" and add the event name (e.g., `onCompleted()`, `onActive()`, `onWaiting()` and etc).
 
-class UserRegisterEmail {
+```ts
+export default class UserRegisterEmail implements JobContract {
   ...
-
-  onCompleted(job, result) {
-    Ws
-      .getChannel('admin:notifications')
-      .topic('admin:notifications')
-      .broadcast('new:user', result)
-  }
+  public onCompleted(job, result) {}
+  public onActive(job) {}
+  ...
 }
-
-module.exports = UserRegisterEmail;
 ```
 
-## Processing the jobs
+### Processing the jobs
 
 ### Simple job
 
 You can share the `job` of any `controller`, `hook` or any other place you might like:
 
-```js
-const User = use('App/Models/User')
-const Bull = use('Rocketseat/Bull')
-const Job = use('App/Jobs/UserRegisterEmail')
+```ts
+import User from 'App/Models/User'
+import Bull from '@ioc:Rocketseat/Bull'
+import Job from 'App/Jobs/UserRegisterEmail'
 
-class UserController {
+export default class UserController {
   store ({ request, response }) {
     const data = request.only(['email', 'name', 'password'])
 
@@ -166,50 +213,54 @@ class UserController {
     Bull.add(Job.key, user)
   }
 }
-
-module.exports = UserController
 ```
 
 ### Scheduled job
 
 Sometimes it is necessary to schedule a job instead of shooting it imediately. You should use `schedule` for that:
 
-```js
-const User = use('App/Models/User')
-const Bull = use('Rocketseat/Bull')
-const Job = use('App/Jobs/HolidayOnSaleEmail')
+```ts
+import User from 'App/Models/User'
+import ProductOnSale from 'App/Services/ProductOnSale'
+import Bull from '@ioc:Rocketseat/Bull'
+import Job from 'App/Jobs/UserRegisterEmail'
+import parseISO from 'date-fns/parseISO'
 
-class HolidayOnSaleController {
+export default class HolidayOnSaleController {
   store ({ request, response }) {
-    const data = request.only(['date', 'product_list']) // 2019-11-15 12:00:00
+    const data = request.only(['date', 'product_list']) // 2020-11-06T12:00:00
 
     const products = await ProductOnSale.create(data)
 
-
-    Bull.schedule(Job.key, products, data.date)
+    Bull.schedule(Job.key, products, parseISO(data.date))
   }
 }
-
-module.exports = HolidayOnSaleController
 ```
 
-This `job` will be sent only on the specific date, wich for example here is on November 15th at noon.
+This `job` will be sent only on the specific date.
 
-When finishing a date, never use past dates because it will cause an error.
+If a date has already passed, an error will occur.
 
-other ways of using `schedule`:
+#### Other ways of using schedule
 
-```js
+```ts
 Bull.schedule(key, data, new Date("2019-11-15 12:00:00"));
-Bull.schedule(key, data, "2 hours"); // 2 hours from now
 Bull.schedule(key, data, 60 * 1000); // 1 minute from now.
+```
+
+#### Using schedule with a third party lib
+
+```ts
+import humanInterval from 'human-interval'
+
+Bull.schedule(key, data, humanInterval("2 hours")); // 2 hours from now
 ```
 
 ### Advanced jobs
 
 You can use the own `Bull` configs to improve your job:
 
-```js
+```ts
 Bull.add(key, data, {
   repeat: {
     cron: "0 30 12 * * WED,FRI"
@@ -217,26 +268,46 @@ Bull.add(key, data, {
 });
 ```
 
-This `job` will be run at 12:30 PM, only on wednesdays and fridays.
+This `job` will run at 12:30 PM, on Wednesdays and Fridays.
 
 ### Exceptions
 
-To have a bigger control over errors that might occur on the line, the events that fail can be manipulated at the file `App/Exceptions/QueueHandler.js`:
+To have better control over errors that can occur in jobs, events that fail can be handled by creating an `ExceptionHandler`:
 
-```js
-const Sentry = use("Sentry");
+```sh
+node ace bull:exception
+```
 
-class QueueHandler {
-  async report(error, job) {
-    Sentry.configureScope(scope => {
-      scope.setExtra(job);
-    });
+A `BullHandler.ts` file will be generated at `App/Exceptions`.
 
-    Sentry.captureException(error);
+You can change this file to handle job errors as you prefer. Here is an example using **Sentry**:
+
+```ts
+import BullExceptionHandler from '@ioc:Rocketseat/Bull/BullExceptionHandler'
+import { Job } from '@ioc:Rocketseat/Bull'
+import Env from '@ioc:Adonis/Core/Env'
+import Logger from '@ioc:Adonis/Core/Logger'
+import Sentry from 'App/Services/Sentry'
+
+const isDevelopment = Env.get('NODE_ENV') === 'development'
+
+export default class JobExceptionHandler extends BullExceptionHandler {
+  constructor () {
+    super(Logger)
+  }
+
+  public async handle (error: Error, job: Job) {
+    if (isDevelopment) {
+      this.logger.error(`key=${job.name} id=${job.id} error=${error.message}`)
+    } else {
+      Sentry.configureScope(scope => {
+        scope.setExtra(job);
+      });
+
+      Sentry.captureException(error);
+    }
   }
 }
-
-module.exports = QueueHandler;
 ```
 
 ## Contributing

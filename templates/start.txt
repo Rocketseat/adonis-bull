@@ -1,0 +1,7 @@
+const jobs = [
+  {{#startJobs}}
+  '{{{.}}}',
+  {{/startJobs}}
+]
+
+export default jobs
