@@ -6,7 +6,7 @@ const path = require('path')
 
 const Queue = require('../../src/Queue')
 
-test.group('Bull', group => {
+test.group('Bull', (group) => {
   group.before(async () => {
     // registrar.before(['@adonisjs/redis/providers/RedisProvider']).register()
 
@@ -23,18 +23,18 @@ test.group('Bull', group => {
           host: '127.0.0.1',
           port: 6379,
           db: 0,
-          keyPrefix: ''
+          keyPrefix: '',
         },
         bull: {
           host: '127.0.0.1',
           port: 6379,
           db: 0,
-          keyPrefix: 'q'
-        }
+          keyPrefix: 'q',
+        },
       })
 
       config.set('bull', {
-        connection: 'bull'
+        connection: 'bull',
       })
 
       return config
@@ -48,22 +48,28 @@ test.group('Bull', group => {
     ioc.restore()
   })
 
-  test('should add a new job', async assert => {
+  test('should add a new job', async (assert) => {
     ioc.bind('Test/Bull', () => {
       return class {
-        static get key () {
+        static get key() {
           return 'TestBull-name'
         }
 
-        static get concurrency () {
+        static get concurrency() {
           return 2
         }
 
-        async handle () {}
+        async handle() {}
       }
     })
 
-    const bull = new Queue(console, ioc.use('Config'), ['Test/Bull'], ioc, resolver)
+    const bull = new Queue(
+      console,
+      ioc.use('Config'),
+      ['Test/Bull'],
+      ioc,
+      resolver
+    )
     const Job = ioc.use('Test/Bull')
     const data = { test: 'data' }
 
@@ -76,23 +82,29 @@ test.group('Bull', group => {
     assert.equal(queue.concurrency, 2)
   })
 
-  test('should add a new job with events inside Job class', async assert => {
+  test('should add a new job with events inside Job class', async (assert) => {
     assert.plan(1)
     ioc.bind('Test/Bull', () => {
       return class {
-        static get key () {
+        static get key() {
           return 'TestBull-name'
         }
 
-        onCompleted () {
+        onCompleted() {
           assert.isOk()
         }
 
-        async handle () {}
+        async handle() {}
       }
     })
 
-    const bull = new Queue(console, ioc.use('Config'), ['Test/Bull'], ioc, resolver)
+    const bull = new Queue(
+      console,
+      ioc.use('Config'),
+      ['Test/Bull'],
+      ioc,
+      resolver
+    )
     const Job = ioc.use('Test/Bull')
     const data = { test: 'data' }
 
@@ -102,18 +114,24 @@ test.group('Bull', group => {
     await delay(1050)
   })
 
-  test('should schedule a new job', async assert => {
+  test('should schedule a new job', async (assert) => {
     ioc.bind('Test/Bull', () => {
       return class {
-        static get key () {
+        static get key() {
           return 'TestBull-name'
         }
 
-        async handle () {}
+        async handle() {}
       }
     })
 
-    const bull = new Queue(console, ioc.use('Config'), ['Test/Bull'], ioc, resolver)
+    const bull = new Queue(
+      console,
+      ioc.use('Config'),
+      ['Test/Bull'],
+      ioc,
+      resolver
+    )
     const Job = ioc.use('Test/Bull')
     const data = { test: 'data' }
 
@@ -124,20 +142,26 @@ test.group('Bull', group => {
     assert.deepEqual(data, job.data)
   })
 
-  test('shouldn\'t schedule when time is invalid', async assert => {
+  test("shouldn't schedule when time is invalid", async (assert) => {
     assert.plan(1)
 
     ioc.bind('Test/Bull', () => {
       return class {
-        static get key () {
+        static get key() {
           return 'TestBull-name'
         }
 
-        async handle () {}
+        async handle() {}
       }
     })
 
-    const bull = new Queue(console, ioc.use('Config'), ['Test/Bull'], ioc, resolver)
+    const bull = new Queue(
+      console,
+      ioc.use('Config'),
+      ['Test/Bull'],
+      ioc,
+      resolver
+    )
     const Job = ioc.use('Test/Bull')
     const data = { test: 'data' }
 

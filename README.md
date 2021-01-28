@@ -78,11 +78,11 @@ Bull.process()
 Add .preLoad in server.js to initialize the bull preload
 
 ```js
-new Ignitor(require("@adonisjs/fold"))
+new Ignitor(require('@adonisjs/fold'))
   .appRoot(__dirname)
   .preLoad("preloads/bull") // Add This Line
   .fireHttpServer()
-  .catch(console.error);
+  .catch(console.error)
 ```
 
 ## Creating your job

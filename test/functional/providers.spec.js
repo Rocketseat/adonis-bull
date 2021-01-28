@@ -3,12 +3,12 @@ const test = require('japa')
 const { ioc, registrar, resolver } = require('@adonisjs/fold')
 const { Helpers, Config } = require('@adonisjs/sink')
 
-test.group('Provider', group => {
+test.group('Provider', (group) => {
   group.before(async () => {
     resolver.appNamespace('App')
-    registrar.providers([
-      path.join(__dirname, '../../providers/Bull')
-    ]).register()
+    registrar
+      .providers([path.join(__dirname, '../../providers/Bull')])
+      .register()
 
     ioc.bind('Adonis/Src/Logger', () => {
       return console
@@ -29,18 +29,18 @@ test.group('Provider', group => {
           host: '127.0.0.1',
           port: 6379,
           db: 0,
-          keyPrefix: ''
+          keyPrefix: '',
         },
         bull: {
           host: '127.0.0.1',
           port: 6379,
           db: 0,
-          keyPrefix: 'q'
-        }
+          keyPrefix: 'q',
+        },
       })
 
       config.set('bull', {
-        connection: 'bull'
+        connection: 'bull',
       })
 
       return config
@@ -54,7 +54,7 @@ test.group('Provider', group => {
     ioc.restore()
   })
 
-  test('BullProvider', async assert => {
+  test('BullProvider', async (assert) => {
     assert.isDefined(ioc.use('Rocketseat/Bull'))
     assert.isTrue(ioc._bindings['Rocketseat/Bull'].singleton)
   })
