@@ -3,15 +3,20 @@
 </h1>
 
 <p align="center">
-  A <a href="https://github.com/OptimalBits/bull/">Bull</a> provider for the Adonis framework. </br>
+  A <a href="https://github.com/taskforcesh/bullmq">Bull</a> provider for <a href="https://adonisjs.com/">AdonisJs</a> </br>
   Adonis Bull provides an easy way to start using Bull. The fastest, most reliable, Redis-based queue for Node.
 </p>
 
+> This documentation refers to the stable version of Adonis Bull, for Adonis v4.x <br />
+> If you are using Adonis v5, [click here](https://github.com/Rocketseat/adonis-bull/tree/alpha).
+
 ## Install
 
-`adonis install @rocketseat/adonis-bull`
+```sh
+adonis install @rocketseat/adonis-bull
+```
 
-## Use
+## Usage
 
 Register the Bull commands at `start/app.js`
 
@@ -72,13 +77,12 @@ Bull.process()
 
 Add .preLoad in server.js to initialize the bull preload
 
-```
-new Ignitor(require('@adonisjs/fold'))
+```js
+new Ignitor(require("@adonisjs/fold"))
   .appRoot(__dirname)
-  .preLoad('preloads/bull') // Add This Line
+  .preLoad("preloads/bull") // Add This Line
   .fireHttpServer()
-  .catch(console.error)
-
+  .catch(console.error);
 ```
 
 ## Creating your job
@@ -236,3 +240,19 @@ class QueueHandler {
 
 module.exports = QueueHandler;
 ```
+
+## Contributing
+
+Thank you for being interested in making this package better. We encourage everyone to help improve this project with new features, bug fixes, or performance improvements. Please take a little bit of your time to read our guide to make this process faster and easier.
+
+### Contribution Guidelines
+
+To understand how to submit an issue, commit and create pull requests, check our [Contribution Guidelines](/.github/CONTRIBUTING.md).
+
+### Code of Conduct
+
+We expect you to follow our [Code of Conduct](/.github/CODE_OF_CONDUCT.md). You can read it to understand what kind of behavior will and will not be tolerated.
+
+## License
+
+MIT License © [Rocketseat](https://github.com/Rocketseat)
