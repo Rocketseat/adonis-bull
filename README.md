@@ -127,25 +127,6 @@ class UserRegisterEmail {
 
 ### Events
 
-You can config the events related to the `job` to have more control over it
-
-```js
-const Ws = use('Ws')
-
-class UserRegisterEmail {
-  ...
-
-  onCompleted(job, result) {
-    Ws
-      .getChannel('admin:notifications')
-      .topic('admin:notifications')
-      .broadcast('new:user', result)
-  }
-}
-
-module.exports = UserRegisterEmail;
-```
-
 The package has support for all events triggered in the bull, just add "on" and complete with the name of the event
 Ex: `onCompleted()`, `onActive()`, `onWaiting()` and etc.
 
