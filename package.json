@@ -6,9 +6,8 @@
   "types": "build/adonis-typings/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "test:local": "node japaFile.js",
-    "test": "nyc npm run test:local",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "test": "node japaFile.js",
+    "coverage": "nyc --reporter=lcov --reporter=text-summary npm run test",
     "copyfiles": "copyfiles \"templates/**/*.txt\" build",
     "compile": "tsc",
     "prebuild": "rimraf ./build",
@@ -51,7 +50,7 @@
   },
   "commitlint": {
     "extends": [
-      "rocketseat"
+      "@rocketseat/commitlint-config"
     ]
   },
   "keywords": [
@@ -80,7 +79,7 @@
     "@types/node": "^14.6.1",
     "@typescript-eslint/eslint-plugin": "^4.1.0",
     "@typescript-eslint/parser": "^4.1.0",
-    "commitlint-config-rocketseat": "^0.0.1",
+    "@rocketseat/commitlint-config": "^0.0.2",
     "copyfiles": "^2.3.0",
     "coveralls": "^3.0.7",
     "delay": "^4.3.0",
