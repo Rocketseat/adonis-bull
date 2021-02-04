@@ -1,14 +1,26 @@
-<h1 align="center">
-  <img width="275" alt="Adonis Bull" src="https://user-images.githubusercontent.com/16545335/71373449-f2146880-2595-11ea-8a8c-9f51384a3f22.png">
-</h1>
+<br />
+
+<img width="275" alt="Adonis Bull" src="https://user-images.githubusercontent.com/16545335/71373449-f2146880-2595-11ea-8a8c-9f51384a3f22.png">
 
 <p align="center">
-  A <a href="https://github.com/taskforcesh/bullmq">Bull</a> provider for <a href="https://adonisjs.com/">AdonisJs</a> </br>
-  Adonis Bull provides an easy way to start using Bull. The fastest, most reliable, Redis-based queue for Node.
+  <h2>A <a href="https://github.com/taskforcesh/bullmq">Bull</a> provider for <a href="https://adonisjs.com/">AdonisJS</a> </br>
+  Adonis Bull provides an easy way to start using Bull.
+  </h2>
 </p>
 
-> This documentation refers to the stable version of Adonis Bull, for Adonis v4.x <br />
-> If you are using Adonis v5, [click here](https://github.com/Rocketseat/adonis-bull/tree/alpha).
+<div>
+
+[![build-image]][build-url] [![coveralls-image]][coveralls-url] [![license-image]][license-url] [![npm-image]][npm-url]
+
+</div>
+
+<br />
+
+> **This documentation refers to the stable version of Adonis Bull, for Adonis v4.x** <br /> > **If you are using Adonis v5, [click here](https://github.com/Rocketseat/adonis-bull/tree/alpha).**
+
+## Why
+
+Using Bull with Adonis shouldn't be hard. It shouldn't require dozens of steps to configure it. That's why adonis-bull exists. It provides an easy way to use queues when developing applications with AdonisJS.
 
 ## Install
 
@@ -260,3 +272,12 @@ We expect you to follow our [Code of Conduct](/.github/CODE_OF_CONDUCT.md). You 
 ## License
 
 MIT License © [Rocketseat](https://github.com/Rocketseat)
+
+[npm-image]: https://img.shields.io/npm/v/@rocketseat/adonis-bull?color=8257E5&style=for-the-badge
+[npm-url]: https://www.npmjs.com/package/@rocketseat/adonis-bull 'npm'
+[license-url]: LICENSE.md
+[license-image]: https://img.shields.io/github/license/adonisjs/adonis-framework?color=8257E5&style=for-the-badge
+[build-url]: https://github.com/Rocketseat/adonis-bull/actions
+[build-image]: https://img.shields.io/github/workflow/status/Rocketseat/adonis-bull/Node.js/master?color=8257E5&style=for-the-badge
+[coveralls-image]: https://img.shields.io/coveralls/github/Rocketseat/adonis-bull/master?color=8257E5&style=for-the-badge
+[coveralls-url]: https://coveralls.io/github/Rocketseat/adonis-bull?branch=master
