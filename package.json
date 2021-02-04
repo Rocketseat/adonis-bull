@@ -4,9 +4,8 @@
   "main": "src/Queue.js",
   "license": "MIT",
   "scripts": {
-    "test:local": "node japaFile.js",
-    "test": "nyc npm run test:local",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "test": "node japaFile.js",
+    "coverage": "nyc --reporter=lcov --reporter=text-summary npm run test",
     "lint": "eslint --ignore-path .gitignore",
     "format": "prettier \"**/*.js\" --write --ignore-path .gitignore"
   },
@@ -51,7 +50,6 @@
     "@adonisjs/sink": "^1.0.17",
     "@commitlint/cli": "^11.0.0",
     "commitlint-config-rocketseat": "^0.0.1",
-    "coveralls": "^3.0.7",
     "delay": "^4.3.0",
     "eslint": "^7.18.0",
     "eslint-config-prettier": "^7.2.0",
@@ -62,8 +60,8 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "husky": "^4.3.8",
-    "lint-staged": "^10.5.3",
     "japa": "^3.0.1",
+    "lint-staged": "^10.5.3",
     "nyc": "^14.1.1",
     "prettier": "^2.2.1"
   },
