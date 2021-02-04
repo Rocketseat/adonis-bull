@@ -325,6 +325,11 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
+"@rocketseat/commitlint-config@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@rocketseat/commitlint-config/-/commitlint-config-0.0.2.tgz#6b3ba12ec2f44a476f52a0d81974d566a8147833"
+  integrity sha512-Bh24AD6IoI04plVLQuLqGG+V9iOEQYfSwhgW5WWYFuZWc6b1ExD/R3N9BvlnjtAEAnSgh7m0jO1AGcdNRYA1ag==
+
 "@types/body-parser@*":
   version "1.19.0"
   resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.19.0.tgz#0685b3c47eb3006ffed117cdd55164b61f80538f"
@@ -1166,11 +1171,6 @@ commander@^6.2.0:
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
   integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
-
-commitlint-config-rocketseat@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/commitlint-config-rocketseat/-/commitlint-config-rocketseat-0.0.1.tgz#3442dcf2956c1cc7a06859cafd97c50e5cebfe6b"
-  integrity sha512-klfAAQ4bWDrYvM1le9cbWLOidrGVhns+puYEMS/F7IO0KDBCXC09mczAm57oWClM5YFtkKSrvUGwz1oksfNQgQ==
 
 commondir@^1.0.1:
   version "1.0.1"
