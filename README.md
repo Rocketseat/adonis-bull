@@ -21,7 +21,7 @@ adonis install @rocketseat/adonis-bull
 Register the Bull commands at `start/app.js`
 
 ```js
-const aceProviders = ["@rocketseat/adonis-bull/providers/Command"];
+const aceProviders = ['@rocketseat/adonis-bull/providers/Command']
 ```
 
 Register the Bull provider at `start/app.js`
@@ -29,37 +29,37 @@ Register the Bull provider at `start/app.js`
 ```js
 const providers = [
   //...
-  "@rocketseat/adonis-bull/providers/Bull",
-];
+  '@rocketseat/adonis-bull/providers/Bull',
+]
 ```
 
 Create a file with the `jobs` that will be processed at `start/jobs.js`:
 
 ```js
-module.exports = ["App/Jobs/UserRegisterEmail"];
+module.exports = ['App/Jobs/UserRegisterEmail']
 ```
 
 Add the config file at `config/bull.js`:
 
 ```js
-"use strict";
+'use strict'
 
-const Env = use("Env");
+const Env = use('Env')
 
 module.exports = {
   // redis connection
-  connection: Env.get("BULL_CONNECTION", "bull"),
+  connection: Env.get('BULL_CONNECTION', 'bull'),
   bull: {
     redis: {
-      host: "127.0.0.1",
+      host: '127.0.0.1',
       port: 6379,
       password: null,
       db: 0,
-      keyPrefix: "",
+      keyPrefix: '',
     },
   },
-  remote: "redis://redis.example.com?password=correcthorsebatterystaple",
-};
+  remote: 'redis://redis.example.com?password=correcthorsebatterystaple',
+}
 ```
 
 In the above file you can define redis connections, there you can pass all `Bull` queue configurations described [here](https://github.com/OptimalBits/bull/blob/develop/REFERENCE.md#queue).
@@ -67,11 +67,11 @@ In the above file you can define redis connections, there you can pass all `Bull
 Create a file to initiate `Bull` at `preloads/bull.js`:
 
 ```js
-const Bull = use("Rocketseat/Bull");
+const Bull = use('Rocketseat/Bull')
 
 Bull.process()
   // Optionally you can start BullBoard:
-  .ui(9999); // http://localhost:9999
+  .ui(9999) // http://localhost:9999
 // You don't need to specify the port, the default number is 9999
 ```
 
@@ -80,7 +80,7 @@ Add .preLoad in server.js to initialize the bull preload
 ```js
 new Ignitor(require('@adonisjs/fold'))
   .appRoot(__dirname)
-  .preLoad("preloads/bull") // Add This Line
+  .preLoad('preloads/bull') // Add This Line
   .fireHttpServer()
   .catch(console.error)
 ```
@@ -94,28 +94,28 @@ The `key` method is the unique identification of each job. It has to be a `stati
 The `handle` is the method that contains the functionality of your `job`.
 
 ```js
-const Mail = use("Mail");
+const Mail = use('Mail')
 
 class UserRegisterEmail {
   static get key() {
-    return "UserRegisterEmail-key";
+    return 'UserRegisterEmail-key'
   }
 
   async handle(job) {
-    const { data } = job; // the 'data' variable has user data
+    const { data } = job // the 'data' variable has user data
 
-    await Mail.send("emails.welcome", data, (message) => {
+    await Mail.send('emails.welcome', data, (message) => {
       message
         .to(data.email)
-        .from("<from-email>")
-        .subject("Welcome to yardstick");
-    });
+        .from('<from-email>')
+        .subject('Welcome to yardstick')
+    })
 
-    return data;
+    return data
   }
 }
 
-module.exports = UserRegisterEmail;
+module.exports = UserRegisterEmail
 ```
 
 You can use the `connection` static get method to specify which connection your `job` will work.
@@ -124,7 +124,7 @@ You can use the `connection` static get method to specify which connection your 
 class UserRegisterEmail {
   // ...
   static get connection() {
-    return "remote";
+    return 'remote'
   }
 }
 ```
@@ -137,7 +137,6 @@ Ex: `onCompleted()`, `onActive()`, `onWaiting()` and etc.
 ```js
 class UserRegisterEmail {
   ...
-
   onCompleted(job, result) {}
   onActive(job) {}
   ...
@@ -202,9 +201,9 @@ When finishing a date, never use past dates because it will cause an error.
 other ways of using `schedule`:
 
 ```js
-Bull.schedule(key, data, new Date("2019-11-15 12:00:00"));
-Bull.schedule(key, data, "2 hours"); // 2 hours from now
-Bull.schedule(key, data, 60 * 1000); // 1 minute from now.
+Bull.schedule(key, data, new Date('2019-11-15 12:00:00'))
+Bull.schedule(key, data, '2 hours') // 2 hours from now
+Bull.schedule(key, data, 60 * 1000) // 1 minute from now.
 ```
 
 ### Advanced jobs
@@ -214,9 +213,9 @@ You can use the own `Bull` configs to improve your job:
 ```js
 Bull.add(key, data, {
   repeat: {
-    cron: "0 30 12 * * WED,FRI",
+    cron: '0 30 12 * * WED,FRI',
   },
-});
+})
 ```
 
 This `job` will be run at 12:30 PM, only on wednesdays and fridays.
@@ -226,19 +225,19 @@ This `job` will be run at 12:30 PM, only on wednesdays and fridays.
 To have a bigger control over errors that might occur on the line, the events that fail can be manipulated at the file `App/Exceptions/QueueHandler.js`:
 
 ```js
-const Sentry = use("Sentry");
+const Sentry = use('Sentry')
 
 class QueueHandler {
   async report(error, job) {
     Sentry.configureScope((scope) => {
-      scope.setExtra(job);
-    });
+      scope.setExtra(job)
+    })
 
-    Sentry.captureException(error);
+    Sentry.captureException(error)
   }
 }
 
-module.exports = QueueHandler;
+module.exports = QueueHandler
 ```
 
 ## Contributing
