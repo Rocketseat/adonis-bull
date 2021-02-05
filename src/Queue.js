@@ -101,11 +101,13 @@ class Queue {
   }
 
   ui(port = 9999) {
-    BullBoard.setQueues(Object.values(this.queues).map((queue) => queue.bull))
+    BullBoard.setQueues(
+      Object.values(this.queues).map(
+        (queue) => new BullBoard.BullAdapter(queue.bull)
+      )
+    )
 
-    const { UI } = BullBoard
-
-    const server = UI.listen(port, () => {
+    const server = BullBoard.router.listen(port, () => {
       this.Logger.info(`bull board on http://localhost:${port}`)
     })
 

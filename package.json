@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "bull": "^3.12.0",
-    "bull-board": "0.7.0",
+    "bull-board": "1.2.0",
     "date-fns": "^2.7.0",
     "human-interval": "^0.1.6"
   },
