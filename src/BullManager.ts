@@ -7,6 +7,7 @@ import {
   QueueContract,
   BullConfig,
   EventListener,
+  QueueOptions,
 } from '@ioc:Rocketseat/Bull'
 
 import {
@@ -39,8 +40,9 @@ export class BullManager implements BullManagerContract {
     this._queues = this.jobs.reduce((queues, path) => {
       const jobDefinition: JobContract = this.container.make(path)
 
-      const queueConfig = {
+      const queueConfig: QueueOptions = {
         connection: this.config.connections[this.config.connection],
+        defaultJobOptions: jobDefinition.options,
         ...jobDefinition.queueOptions,
       }
 
