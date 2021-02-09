@@ -219,7 +219,7 @@ export default class UserController {
     const user = await User.create(data)
 
 
-    Bull.add(Job.key, user)
+    Bull.add(new Job().key, user)
   }
 }
 ```
@@ -241,7 +241,7 @@ export default class HolidayOnSaleController {
 
     const products = await ProductOnSale.create(data)
 
-    Bull.schedule(Job.key, products, parseISO(data.date))
+    Bull.schedule(new Job().key, products, parseISO(data.date))
   }
 }
 ```
