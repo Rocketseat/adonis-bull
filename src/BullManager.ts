@@ -54,7 +54,6 @@ export class BullManager implements BullManagerContract {
         ...jobDefinition,
         instance: jobDefinition,
         listeners: jobListeners,
-        handle: jobDefinition.handle,
         boot: jobDefinition.boot,
       })
 
@@ -153,7 +152,7 @@ export class BullManager implements BullManagerContract {
 
       const processor: Processor = async (job) => {
         try {
-          return await jobDefinition.handle(job)
+          return await jobDefinition.instance.handle(job)
         } catch (error) {
           await this.handleException(error, job)
           return Promise.reject(error)
