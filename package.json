@@ -1,7 +1,7 @@
 {
   "name": "@rocketseat/adonis-bull",
   "description": "The easiest way to start using an asynchronous job queue with AdonisJS. Supports version 5 and 4.x",
-  "version": "1.0.0-0",
+  "version": "1.0.0-1",
   "main": "build/providers/BullProvider.js",
   "types": "build/adonis-typings/index.d.ts",
   "license": "MIT",
