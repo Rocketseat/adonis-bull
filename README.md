@@ -83,8 +83,8 @@ const Bull = use('Rocketseat/Bull')
 
 Bull.process()
   // Optionally you can start BullBoard:
-  .ui(9999) // http://localhost:9999
-// You don't need to specify the port, the default number is 9999
+  .ui(9999, 'localhost') // http://localhost:9999
+// You don't need to specify either port or hostname, the default port number is 9999 and the default hostname is localhost
 ```
 
 Add .preLoad in server.js to initialize the bull preload
