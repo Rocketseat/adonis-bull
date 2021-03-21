@@ -100,15 +100,15 @@ class Queue {
     }
   }
 
-  ui(port = 9999) {
+  ui(port = 9999, hostname = 'localhost') {
     BullBoard.setQueues(
       Object.values(this.queues).map(
         (queue) => new BullBoard.BullAdapter(queue.bull)
       )
     )
 
-    const server = BullBoard.router.listen(port, () => {
-      this.Logger.info(`bull board on http://localhost:${port}`)
+    const server = BullBoard.router.listen(port, hostname, () => {
+      this.Logger.info(`bull board on http://${hostname}:${port}`)
     })
 
     const shutdown = () => {
