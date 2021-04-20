@@ -1,6 +1,6 @@
 {
   "name": "@rocketseat/adonis-bull",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "main": "src/Queue.js",
   "license": "MIT",
   "scripts": {
@@ -70,8 +70,8 @@
     "url": "git+https://github.com/rocketseat/adonis-bull.git"
   },
   "dependencies": {
-    "bull": "^3.12.0",
-    "bull-board": "1.2.0",
+    "bull": "^3.22.1",
+    "bull-board": "^1.5.1",
     "date-fns": "^2.7.0",
     "human-interval": "^0.1.6"
   },
