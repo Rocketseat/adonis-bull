@@ -15,7 +15,9 @@ class Listen extends Command {
   static get signature() {
     return `
       bull:listen
-      { --board?=@value: Run bull's dashboard }
+      { --board?=false : Run bull's dashboard }
+      { --board-hostname?=@value : Dashboard hostname }
+      { --board-port?=@value : Dashboard port }
     `
   }
 
@@ -23,11 +25,10 @@ class Listen extends Command {
     return 'Start the Bull listener'
   }
 
-  async handle(args, { board }) {
+  async handle(args, { board = false, boardHostname = 'localhost', boardPort = 9999 }) {
     this.Bull.process()
     if (board) {
-      const port = typeof board === 'boolean' ? 9999 : Number(board)
-      this.Bull.ui(port)
+      this.Bull.ui(boardPort, boardHostname)
     }
   }
 }
