@@ -20,6 +20,7 @@ import {
   Processor,
 } from 'bullmq'
 import * as BullBoard from 'bull-board'
+import { BullMQAdapter } from 'bull-board/bullMQAdapter'
 
 export class BullManager implements BullManagerContract {
   constructor(
@@ -117,13 +118,13 @@ export class BullManager implements BullManagerContract {
 
   /* istanbul ignore next */
   public ui(port = 9999) {
-    BullBoard.setQueues(
+    const board = BullBoard.createBullBoard(
       Object.keys(this.queues).map(
-        (key) => new BullBoard.BullMQAdapter(this.getByKey(key).bull)
+        (key) => new BullMQAdapter(this.getByKey(key).bull)
       )
     )
 
-    const server = BullBoard.router.listen(port, () => {
+    const server = board.router.listen(port, () => {
       this.Logger.info(`bull board on http://localhost:${port}`)
     })
 

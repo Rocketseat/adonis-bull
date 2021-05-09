@@ -1,8 +1,8 @@
 import { join } from 'path'
 import { Filesystem } from '@poppinss/dev-utils'
-import { Application } from '@adonisjs/core/build/standalone'
+import { Application } from '@adonisjs/application'
 
-import { FakeLogger } from '@adonisjs/logger/build/standalone'
+import { FakeLogger } from '@adonisjs/logger'
 
 export const fs = new Filesystem(join(__dirname, 'app'))
 
@@ -37,11 +37,11 @@ export async function setupApplication(
     `
     export default class SomeJob {
       public key = 'SomeJob-key'
-    
+
       public async handle () {
         return 'good luck'
       }
-    }  
+    }
   `
   )
 
@@ -59,7 +59,7 @@ export async function setupApplication(
 
     const bullConfig  = {
         connection: 'local',
-        
+
         connections: {
             local: {
               host: 'localhost',
@@ -79,8 +79,8 @@ export async function setupApplication(
     providers: ['@adonisjs/core', '../../providers/BullProvider'],
   })
 
-  app.setup()
-  app.registerProviders()
+  await app.setup()
+  await app.registerProviders()
   await app.bootProviders()
 
   return app

@@ -3,7 +3,7 @@
 import test from 'japa'
 import { Ioc } from '@adonisjs/fold'
 import { BullManager } from '../../src/BullManager'
-import { FakeLogger } from '@adonisjs/logger/build/standalone'
+import { FakeLogger } from '@adonisjs/logger'
 import { LoggerContract } from '@ioc:Adonis/Core/Logger'
 import { JobContract, BullConfig } from '@ioc:Rocketseat/Bull'
 import { BullExceptionHandler } from '../../src/BullExceptionHandler'
