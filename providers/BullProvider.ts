@@ -1,33 +1,36 @@
-import { IocContract } from '@adonisjs/fold'
-import { BullManagerContract } from '@ioc:Rocketseat/Bull'
+import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 /**
  * Provider to bind bull to the container
  */
 export default class BullProvider {
-  constructor(protected container: IocContract) {}
+  constructor(protected app: ApplicationContract) {}
 
-  public register() {
-    this.container.bind('Rocketseat/Bull/BullExceptionHandler', () => {
+  public async register() {
+    this.app.container.bind('Rocketseat/Bull/BullExceptionHandler', () => {
       const { BullExceptionHandler } = require('../src/BullExceptionHandler')
       return BullExceptionHandler
     })
 
-    this.container.singleton('Rocketseat/Bull', () => {
-      const app = this.container.use('Adonis/Core/Application')
-      const config = this.container.use('Adonis/Core/Config').get('bull', {})
-      const Logger = this.container.use('Adonis/Core/Logger')
+    this.app.container.singleton('Rocketseat/Bull', () => {
+      const app = this.app.container.use('Adonis/Core/Application')
+      const config = this.app.container
+        .use('Adonis/Core/Config')
+        .get('bull', {})
+      const Logger = this.app.container.use('Adonis/Core/Logger')
 
       const jobs = require(app.startPath('jobs'))?.default || []
       const { BullManager } = require('../src/BullManager')
 
-      return new BullManager(this.container, Logger, config, jobs)
+      return new BullManager(this.app.container, Logger, config, jobs)
     })
 
-    this.container.alias('Rocketseat/Bull', 'Bull')
+    this.app.container.alias('Rocketseat/Bull', 'Bull')
   }
 
   public async shutdown() {
-    await this.container.use<BullManagerContract>('Rocketseat/Bull').shutdown()
+    await this.app.container
+      .use<'Rocketseat/Bull'>('Rocketseat/Bull')
+      .shutdown()
   }
 }

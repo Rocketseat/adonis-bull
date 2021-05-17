@@ -67,13 +67,13 @@
   },
   "homepage": "https://github.com/rocketseat/adonis-bull#readme",
   "devDependencies": {
-    "@adonisjs/ace": "^6.9.3",
-    "@adonisjs/application": "^2.0.0",
-    "@adonisjs/core": "^5.0.4-preview-rc-2.1",
-    "@adonisjs/fold": "^6.4.0",
-    "@adonisjs/logger": "^2.1.0",
-    "@adonisjs/mrm-preset": "^2.4.0",
-    "@adonisjs/sink": "^1.0.17",
+    "@adonisjs/ace": "^11.0.1",
+    "@adonisjs/application": "^5.1.2",
+    "@adonisjs/core": "^5.1.6",
+    "@adonisjs/fold": "^8.1.2",
+    "@adonisjs/logger": "^4.0.2",
+    "@adonisjs/mrm-preset": "^3.0.0",
+    "@adonisjs/sink": "^5.1.3",
     "@commitlint/cli": "^11.0.0",
     "@poppinss/dev-utils": "^1.0.11",
     "@rocketseat/commitlint-config": "^0.0.2",
@@ -110,8 +110,8 @@
     "@adonisjs/core": "^5.0.4-preview-rc"
   },
   "dependencies": {
-    "bull-board": "^1.2.0",
-    "bullmq": "^1.9.0"
+    "bull-board": "^2.0.3",
+    "bullmq": "^1.24.5"
   },
   "files": [
     "build/adonis-typings",
