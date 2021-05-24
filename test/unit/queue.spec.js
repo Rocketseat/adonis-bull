@@ -171,4 +171,68 @@ test.group('Bull', (group) => {
       assert.equal('Invalid schedule time', err.message)
     }
   })
+
+  test('should get all repeatable jobs', async (assert) => {
+    ioc.bind('Test/Bull', () => {
+      return class {
+        static get key() {
+          return 'TestBull-name'
+        }
+
+        async handle() {}
+      }
+    })
+
+    const bull = new Queue(
+      console,
+      ioc.use('Config'),
+      ['Test/Bull'],
+      ioc,
+      resolver
+    )
+    const Job = ioc.use('Test/Bull')
+    const data = { test: 'data' }
+    const repeat = { cron: '* * * * *' }
+
+    await bull.add(Job.key, data, { repeat })
+
+    const jobs = await bull.getRepeatableJobs(Job.key)
+
+    assert.equal(jobs.length, 1)
+    assert.deepEqual(repeat.cron, jobs[0].cron)
+  })
+
+  test('should remove a repeatable job', async (assert) => {
+    ioc.bind('Test/Bull', () => {
+      return class {
+        static get key() {
+          return 'TestBull-name'
+        }
+
+        async handle() {}
+      }
+    })
+
+    const bull = new Queue(
+      console,
+      ioc.use('Config'),
+      ['Test/Bull'],
+      ioc,
+      resolver
+    )
+    const Job = ioc.use('Test/Bull')
+    const data = { test: 'data' }
+    const repeat = { cron: '* * * * *' }
+
+    await bull.add(Job.key, data, { repeat })
+
+    let jobs = await bull.getRepeatableJobs(Job.key)
+    assert.equal(jobs.length, 1)
+    assert.deepEqual(repeat.cron, jobs[0].cron)
+
+    await bull.removeRepeatable(Job.key, repeat)
+
+    jobs = await bull.getRepeatableJobs(Job.key)
+    assert.equal(jobs.length, 0)
+  })
 })
