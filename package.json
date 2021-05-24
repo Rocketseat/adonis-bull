@@ -1,6 +1,6 @@
 {
   "name": "@rocketseat/adonis-bull",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "main": "src/Queue.js",
   "license": "MIT",
   "scripts": {
