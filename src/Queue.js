@@ -75,6 +75,19 @@ class Queue {
     return job
   }
 
+  removeRepeatable(name, repeat) {
+    const queue = this.get(name)
+
+    return queue.bull.removeRepeatable('__default__', repeat)
+  }
+
+  getRepeatableJobs(name) {
+    const queue = this.get(name)
+    const jobs = queue.bull.getRepeatableJobs()
+
+    return jobs
+  }
+
   schedule(name, data, date, options) {
     let delay
 
