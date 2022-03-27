@@ -1,7 +1,6 @@
 import { join } from 'path'
 import fs from 'fs'
 import { BaseCommand, args } from '@adonisjs/core/build/standalone'
-import { StringTransformer } from '@adonisjs/ace/build/src/Generator/StringTransformer'
 
 export default class MakeJob extends BaseCommand {
   public static commandName = 'make:job'
@@ -18,26 +17,14 @@ export default class MakeJob extends BaseCommand {
    */
   public async run(): Promise<void> {
     const stub = join(__dirname, '..', 'templates', 'job.txt')
-    const jobName = new StringTransformer(this.name)
-      .changeCase('pascalcase')
-      .changeForm('singular')
-      .toValue()
-
+    
     const path = this.application.resolveNamespaceDirectory('jobs')
     const rootDir = this.application.cliCwd || this.application.appRoot
 
     const jobPath = join(path || 'app/Jobs', `${jobName}.ts`)
 
-    const exist = fs.existsSync(jobPath)
-
-    if (exist) {
-      this.logger.action('create').skipped(jobPath, 'File already exists')
-
-      return
-    }
-
     this.generator
-      .addFile(jobName)
+      .addFile(this.name, { pattern: 'pascalcase', form: 'singular' })
       .stub(stub)
       .destinationDir(path || 'app/Jobs')
       .useMustache()
